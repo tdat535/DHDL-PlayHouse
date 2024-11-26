@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
+<head><title th:text="${title} ?: 'Categories List'"> Categories List </title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body style="background-color:#FFF4EA;">
+<section layout:fragment="content">
+      <div class="container-fluid shadow-sm rounded" style="padding:15px;background-color: #fff">
+        <div class="shadow-sm rounded" style="display:flex; padding:0px 10px; justify-content: space-between;background-color: #fff">
+          <div style="margin-top:10px">
+            <h4>Categories</h4>
+            <p>Detail of categories</p>
+          </div>
+          <div style="margin-top:20px">
+            <a th:href="@{/categories/add}" class="btn btn-primary ">Add New Category</a>
+          </div>
+        </div>
+        <table class="table table-hover shadow-sm rounded" style="">
+          <div class="shadow-sm rounded" style="padding:10px; margin-top:20px">
+          <button class="btn border" style=""  type="button" th:text="'All (' + ${CategoryCount}+')'"></button>
+          </div>
+          <thead class="table-dark">
+          <tr style="text-align:center">
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr style="text-align:center" th:each="category : ${categories}">
+            <td th:text="${category.id}"class="align-middle"></td>
+            <td th:text="${category.name}"class="align-middle"></td>
+            <td class="align-middle">
+              <a th:href="@{/categories/edit/{id}(id=${category.id})}" id class="bi bi-pencil-fill"></i></a>
+              <a th:href="@{/categories/delete/{id}(id=${category.id})}" onclick="return confirm('Are you sure?')" id
+                 class="bi bi-trash-fill"></i></a></td>
+          </tr>
+          </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

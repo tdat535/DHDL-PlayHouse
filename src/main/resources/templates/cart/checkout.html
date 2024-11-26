@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout-user}">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title} ?:'Your Cart'">Place Order</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+</head>
+<body>
+<section layout:fragment="content" class="container mt-3">
+  <h4 class="mt-5 mb-3">Checkout</h4>
+  <form th:action="@{/order/submit}" method="post" class="d-flex gap-3">
+    <div class="col-8 shadow p-3 mb-5 bg-body-tertiary rounded">
+      <p class="fs-5 fw-bolder">Your Information</p>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Your Name" required>
+        <label for="customer_name">Your Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+        <label for="phone_number">Phone Number</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="customer_email" name="email" placeholder="Email" required>
+        <label for="customer_email">Email</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="address" name="address" placeholder="Address" required>
+        <label for="address">Address</label>
+      </div>
+      <div class="form-floating mb-3">
+        <select class="form-select" id="payment_method" name="payment_method" aria-label="Floating label select example">
+          <option value="Pay With Cash">Pay With Cash</option>
+          <option value="Mobile Banking">Mobile Banking</option>
+        </select>
+        <label for="payment_method">Payment Method</label>
+      </div>
+      <div class="form-floating mb-3">
+        <textarea class="form-control" placeholder="Anything to remind us" id="note" name="note" style="height: 100px"></textarea>
+        <label for="note">Notes</label>
+      </div>
+    </div>
+
+    <div class="col-4">
+      <ul class="list-group">
+        <li class="list-group-item py-3"><span class="fs-5 fw-bolder">Bag Totals</span></li>
+        <li class="list-group-item d-flex justify-content-between py-4">
+          <span class="fw-medium">Product total price</span>
+          <span th:text="${totalProduct} + 'đ'"></span>
+        </li>
+        <li class="list-group-item d-flex py-4 justify-content-between">
+          <div>
+            <span class="my-auto fw-medium">Shipping</span>
+            <span th:if="${shippingFee == 0}">(Free Shipping)</span>
+            <span th:if="${shippingFee == 30000}">(Fast Shipping)</span>
+          </div>
+            <span th:text="${shippingFee} + 'đ'" ></span>
+
+        </li>
+        <li class="list-group-item py-4">
+          <div class="d-flex justify-content-between">
+            <span class="fw-medium">Total</span>
+            <span class="fs-5 fw-bold" th:text="${total} + 'đ'"></span>
+          </div>
+          <div class="d-grid mt-5">
+            <button type="submit" class="btn btn-primary">Submit Order</button>
+          </div>
+        </li>
+      </ul>
+      <!--      <a th:href="@{/cart/clear}" class="btn btn-secondary">Clear Cart</a>-->
+      <!--      <a th:href="@{/order/checkout}" class="btn btn-primary">Check Out</a>-->
+    </div>
+
+  </form>
+</section>
+</body>
+</html>

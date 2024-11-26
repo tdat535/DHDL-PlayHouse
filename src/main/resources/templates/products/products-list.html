@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
+      layout:decorate="~{layout}" lang="en">
+<head>
+  <title th:text="${title} ?: 'Products List'">Product</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</head>
+<body style="background-color:#FFF4EA;">
+<section layout:fragment="content">
+  <!-- Main Content -->
+    <div class="container-fluid shadow-sm rounded" style="padding:15px;background-color: #fff">
+      <div class="d-flex justify-content-between shadow-sm rounded" style=" ; background-color: #fff;padding:10px">
+        <div>
+          <h4 style="margin-bottom:0">Products</h4>
+          <p style="margin-bottom:0">Detail of products</p>
+        </div>
+        <div >
+          <a style="margin-bottom:0" sec:authorize="hasAuthority('ADMIN')" th:href="@{/products/add}" class="btn btn-primary">Add New Product</a>
+        </div>
+      </div>
+      <div style="background-color:#fff; border-radius:10px; border: 1px solid #D6D6D6;margin-top:20px;" class="shadow-sm rounded">
+        <div class="d-flex justify-content-between" style="padding:10px 20px; background-color: #fff; border-radius:10px;">
+          <form th:action="@{/products}" method="get" id="filterForm" class="d-flex ">
+            <button class="btn border" style="margin-right:20px;" type="button" th:text="'All (' + ${totalProducts}+')'"></button>
+            <div class="dropdown" style="margin-right:20px;">
+              <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Category
+              </button>
+              <ul class="dropdown-menu">
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Legos" th:checked="${selectedCategories?.contains('Legos')}" onchange="submitForm()"> Legos</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Education" th:checked="${selectedCategories?.contains('Education')}" onchange="submitForm()"> Education</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Outdoor" th:checked="${selectedCategories?.contains('Outdoor')}" onchange="submitForm()"> Outdoor</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Figures" th:checked="${selectedCategories?.contains('Figures')}" onchange="submitForm()"> Figures</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Art Toys" th:checked="${selectedCategories?.contains('Art Toys')}" onchange="submitForm()"> Art Toys</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Board Games" th:checked="${selectedCategories?.contains('Board Games')}" onchange="submitForm()"> Board Games</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="categories" value="Technology" th:checked="${selectedCategories?.contains('Technology')}" onchange="submitForm()"> Technology</label></li>
+              </ul>
+            </div>
+
+            <div class="dropdown">
+              <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Price
+              </button>
+              <ul class="dropdown-menu">
+                <li><label class="dropdown-item"><input type="checkbox" name="priceRanges" value="0$-20$" th:checked="${selectedPriceRanges?.contains('0$-20$')}" onchange="submitForm()">0$-20$</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="priceRanges" value="20$-40$" th:checked="${selectedPriceRanges?.contains('20$-40$')}" onchange="submitForm()">20$-40$</label></li>
+                <li><label class="dropdown-item"><input type="checkbox" name="priceRanges" value="40$-∞" th:checked="${selectedPriceRanges?.contains('40$-∞')}" onchange="submitForm()">&gt;40$</label></li>
+                <!-- Add other price ranges similarly -->
+              </ul>
+            </div>
+            <div class="dropdown" style="margin-left:20px;">
+              <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Brand
+              </button>
+              <ul class="dropdown-menu">
+                <li th:each="brand : ${brands}">
+                  <label class="dropdown-item">
+                    <input type="checkbox" name="brands" th:value="${brand.name}" th:checked="${selectedBrands?.contains(brand.name)}" onchange="submitForm()">
+                    <span th:text="${brand.name}"></span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </form>
+          <script>
+            function submitForm() {
+                document.getElementById("filterForm").submit();
+            }
+          </script>
+
+          <div>
+            <form class="d-flex" role="search" style="width:382px;" action="#" method="get">
+              <input class="form-control" type="search" name="keyword" placeholder="Search" aria-label="Search"
+                     th:value="${keyword}">
+              <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+          </div>
+
+        </div>
+
+        <table class="table table-hover table-striped">
+          <thead class="table-primary">
+          <tr style="text-align:center">
+            <th>ID</th>
+            <th>Image</th>
+            <th>Name</th>
+            <th >Price</th>
+            <th>Quantity</th>
+            <th >Category</th>
+            <th>Brands</th>
+<!--            <th >Description</th>-->
+            <th >Actions</th>
+<!--            <th>Add To Cart</th>-->
+            <th>show</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr style="text-align:center" th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td><img th:src="${product.image}" alt="Image of ${product.name}" class="img-thumbnail" style="max-width: 60px;height:auto"></td>
+            <td th:text="${product.name}" class="align-middle"></td>
+            <td th:text="${product.price}" class="align-middle"></td>
+            <td th:text="${product.quantity}" class="align-middle"></td>
+            <td th:text="${product.category.name}" class="align-middle"></td>
+            <td th:text="${product.brand.name}" class="align-middle"></td>
+<!--            <td th:text="${product.description}" class="align-middle"></td>-->
+            <td class="align-middle">
+              <div sec:authorize="hasAuthority('ADMIN')">
+
+
+                <a th:href="@{/products/edit/{id}(id=${product.id})}"style="margin-right:10px">
+                  <i class="bi bi-pencil-fill"></i>
+
+                </a>
+                <a th:href="@{/products/delete/{id}(id=${product.id})}" onclick="return confirm('Are you sure?')">
+                  <i class="bi bi-trash-fill"></i>
+                </a>
+              </div>
+<!--            <td>-->
+<!--              <form th:action="@{/cart/add}" method="post">-->
+<!--                <label>-->
+<!--                  <input type="number" name="quantity" min="1" value="1"-->
+<!--                         class="form-control d-inline-block"-->
+<!--                         style="width: 70px;">-->
+<!--                </label>-->
+<!--                <input type="hidden" th:value="${product.id}" name="productId"/>-->
+<!--                <input type="hidden" th:value="${product.price}" name="price"/>-->
+<!--                <button type="submit" class="btn btn-warning btn-sm">Add to Cart</button>-->
+<!--              </form>-->
+<!--            </td>-->
+            <td class="button">
+
+              <i class="bi bi-eye-fill" data-bs-toggle="modal"
+                 th:attr = "data-bs-target = '#productModal' + ${product.id}"></i>
+
+              <div class="modal fade" th:attr = "id='productModal' + ${product.id} "tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+
+                        <div class="col-md-4 text-center">
+                          <img th:src="${product.image}" alt="Image of ${product.name}"
+                               class="img-thumbnail" style="max-width: 100%; height: auto;" src="">
+                        </div>
+                        <div class="col-md-8">
+                          <table class="table table-bordered">
+                            <tbody>
+                            <!-- Product ID -->
+                            <tr>
+                              <th>ID</th>
+                              <td th:text="${product.id}"></td>
+                            </tr>
+                            <!-- Product Name -->
+                            <tr>
+                              <th>Name</th>
+                              <td th:text="${product.name}"></td>
+                            </tr>
+                            <!-- Product Price -->
+                            <tr>
+                              <th>Price</th>
+                              <td th:text="${product.price}"></td>
+                            </tr>
+                            <!-- Product Quantity -->
+                            <tr>
+                              <th>Quantity</th>
+                              <td th:text="${product.quantity}"></td>
+                            </tr>
+                            <!-- Product Category -->
+                            <tr>
+                              <th>Category</th>
+                              <td th:text="${product.category.name}"></td>
+                            </tr>
+                            <!-- Product Brand -->
+                            <tr>
+                              <th>Brand</th>
+                              <td th:text="${product.brand.name}"></td>
+                            </tr>
+                            <!-- Product Description -->
+                            <tr>
+                              <th>Description</th>
+                              <td>
+                                <div style="max-height: 150px; overflow-y: auto;">
+                                  <span th:text="${product.description}"></span>
+                                </div>
+                              </td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <ul class="pagination d-flex justify-content-center"style="margin-bottom:10px">
+          <li class="page-item" th:classappend="${productPage.hasPrevious()} ? '' : 'disabled'">
+            <a class="page-link" th:href="${productPage.hasPrevious()} ? @{/products(page=${productPage.totalPages - productPage.totalPages},keyword=${keyword})} : '#'" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" th:classappend="${productPage.hasPrevious()} ? '' : 'disabled'">
+            <a class="page-link" th:href="${productPage.hasPrevious()} ? @{/products(page=${productPage.number - 1},keyword=${keyword})} : '#'" aria-label="Previous">
+              <span aria-hidden="true">&lt;</span>
+            </a>
+          </li>
+          <li class="page-item" th:each="i : ${#numbers.sequence(1, productPage.totalPages)}"
+              th:classappend="${productPage.number + 1 == i} ? 'active'">
+            <a class="page-link" th:href="@{/products(page=${i-1},keyword=${keyword})}" th:text="${i}"></a>
+          </li>
+          <!-- Nút Next -->
+          <li class="page-item" th:classappend="${productPage.hasNext()} ? '' : 'disabled'">
+            <a class="page-link" th:href="${productPage.hasNext()} ? @{/products(page=${productPage.number + 1},keyword=${keyword})} : '#'" aria-label="Next">
+              <span aria-hidden="true">&gt;</span>
+            </a>
+          </li>
+          <li class="page-item" th:classappend="${productPage.hasNext()} ? '' : 'disabled'">
+            <a class="page-link" th:href="${productPage.hasNext()} ? @{/products(page=${productPage.totalPages-1},keyword=${keyword})} : '#'" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  <script>
+    var currentPage = [[${productPage.number}]];
+    var index_1 = '/products?page='+(currentPage+1);
+<!--    window.history.pushState({}, '', index_1);-->
+  </script>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

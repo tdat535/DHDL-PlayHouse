@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
+<head><title th:text="${title} ?: 'OderDetail-list'"> OderDetail-list </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body style="background-color:#FFF4EA;">
+
+<section layout:fragment="content">
+        <div class="container-fluid shadow-sm rounded" style="padding:15px;background-color: #fff">
+            <div class="d-flex justify-content-between shadow-sm rounded" style=" ; background-color: #fff;padding:10px">
+                <div style="margin-top:10px">
+                    <h4 style="margin-bottom:0">Orders</h4>
+                    <p style="margin-bottom:0">Detail of Orders</p>
+                </div>
+            </div>
+            <table class="table table-hover shadow-sm rounded" style="">
+                <div class="shadow-sm rounded" style="padding:10px; margin-top:20px">
+                <button class="btn border" style="margin-right:20px;" type="button" th:text="'All (' + ${OrderCount}+')'"></button>
+                </div>
+                <thead class="table-dark">
+                <tr style="text-align:center">
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>quantity</th>
+                    <th>price</th>
+                    <th>Action</th>
+<!--                    <th>Order</th>-->
+                    <!--          <th>Actions</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr style="text-align:center" th:each="order_detail: ${order_details}">
+                    <td th:text="${order_detail.id}" class="align-middle"></td>
+                    <td th:text="${order_detail.product.name}" class="align-middle"></td>
+                    <td th:text="${order_detail.quantity}" class="align-middle"></td>
+                    <td th:text="${order_detail.getTotalPrice}">Price</td>
+                    <td class="button">
+
+                        <i class="bi bi-eye-fill" data-bs-toggle="modal"
+                           th:attr="data-bs-target='#tableModal_' + ${order_detail.id}"></i>
+
+                        <div class="modal fade" th:attr="id='tableModal_' + ${order_detail.id}" tabindex="-1" aria-labelledby="tableModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="tableModalLabel">Order Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <td th:text="${order_detail.id}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Product Name</th>
+                                                <td th:text="${order_detail.product.name}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quantity</th>
+                                                <td th:text="${order_detail.quantity}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Price</th>
+                                                <td th:text="${order_detail. getTotalPrice}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Customer Name</th>
+                                                <td th:text="${order_detail.order.customerName}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Address</th>
+                                                <td th:text="${order_detail.order.address}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Phone Number</th>
+                                                <td th:text="${order_detail.order.phone_number}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td th:text="${order_detail.order.email}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Note</th>
+                                                <td th:text="${order_detail.order.note}"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Payment Method</th>
+                                                <td th:text="${order_detail.order.payment_method}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <ul class="pagination d-flex justify-content-center" style="margin:0">
+                <li class="page-item" th:classappend="${orderDetailPage.hasPrevious()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${orderDetailPage.hasPrevious()} ? @{/oder_details(page=${orderDetailPage.totalPages - orderDetailPage.totalPages},keyword=${keyword})} : '#'" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${orderDetailPage.hasPrevious()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${orderDetailPage.hasPrevious()} ? @{/oder_details(page=${orderDetailPage.number - 1},keyword=${keyword})} : '#'" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, orderDetailPage.totalPages)}"
+                    th:classappend="${orderDetailPage.number + 1 == i} ? 'active'">
+                    <a class="page-link" th:href="@{/oder_details(page=${i-1},keyword=${keyword})}" th:text="${i}"></a>
+                </li>
+                <!-- Nút Next -->
+                <li class="page-item" th:classappend="${orderDetailPage.hasNext()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${orderDetailPage.hasNext()} ? @{/oder_details(page=${orderDetailPage.number + 1},keyword=${keyword})} : '#'" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${orderDetailPage.hasNext()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${orderDetailPage.hasNext()} ? @{/oder_details(page=${orderDetailPage.totalPages-1},keyword=${keyword})} : '#'" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>H
+            <script>
+                var currentPage = [[${orderDetailPage.number}]];
+                var index_1 = '/oder_details?page='+(currentPage+1);
+                window.history.pushState({}, '', index_1);
+            </script>
+        </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
