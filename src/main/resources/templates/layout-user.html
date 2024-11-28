@@ -13,25 +13,39 @@
 <body style="font-family:'Nunito Sans';" class="mb-0">
 <nav class="navbar navbar-expand-lg" style="background-color:#C96868;">
     <div class="container-fluid">
-        <a class="navbar-brand" style="font-style:bolder;color:#FAF0F0;font-size:32px;font-family:'Archivo Black';" href="/homepage/category">DHDL PlayHouse</a>
+        <a class="navbar-brand" style="font-style:bolder;color:#FAF0F0;font-size:32px;font-family:'Archivo Black';" href="/homepage">DHDL PlayHouse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-5 mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/homepage" style="font-weight:bolder">Home</a>
-                </li>
                 <!--        <li class="nav-item">-->
                 <!--          <a class="nav-link" href="#">Link</a>-->
                 <!--        </li>-->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight:bolder">
-                        Category
+                        Categorys
                     </a>
                     <ul class="dropdown-menu">
-                        <li th:each="category, iterStat : ${categories}">
-                            <a class="dropdown-item" th:href="@{/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/homepage/category}" >ALL</a>
+                        </li>
+                        <li th:each="category : ${categories}">
+                            <a class="dropdown-item" th:href="@{/homepage/category/filter(categoryId=${category.id})}" th:text="${category.name}"></a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight:bolder">
+                        Brands
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/homepage/brand}" >ALL</a>
+                        </li>
+                        <li th:each="brand : ${brands}">
+                            <a class="dropdown-item" th:href="@{/homepage/brand/filter(brandId=${brand.id})}" th:text="${brand.name}"></a>
                         </li>
                     </ul>
                 </li>
@@ -66,7 +80,11 @@
                         <i class="bi bi-person-circle" style="font-size: 1.25rem;"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg-end">
-                        <li><a class="dropdown-item" href="#">Favorites</a></li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/homepage/favorite}">
+                               Favorites
+                            </a>
+                        </li>
                         <li>
                             <form th:action="@{/logout}" method="post">
                                 <button class="dropdown-item" type="submit">Logout</button>

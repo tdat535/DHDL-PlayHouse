@@ -95,4 +95,20 @@ public class User implements UserDetails {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    @ManyToMany(fetch = FetchType.LAZY)  // Lazy loading of favorite products
+    @JoinTable(name = "user_favorites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private Set<Product> favoriteProducts = new HashSet<>();
+
+    public Set<Product> getFavoriteProducts() {
+        return favoriteProducts;
+    }
+
+    public void addToFavorites(Product product) {
+        favoriteProducts.add(product);
+    }
+
+    public void removeFromFavorites(Product product) {
+        favoriteProducts.remove(product);
+    }
 }

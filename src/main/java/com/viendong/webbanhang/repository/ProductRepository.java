@@ -13,6 +13,10 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findByCategoryId(Long categoryId);
+
+    List<Product> findByBrandId(Long brandId);
+
     @Query("SELECT p FROM Product p WHERE " +
             "(:categories IS NULL OR p.category.name IN :categories) " +
             "AND (:priceRanges IS NULL OR " +

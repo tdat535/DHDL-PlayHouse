@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <title>DHDL</title>
     <link rel="stylesheet" href="/css/home-style.css">
+    <style>
+        .zoom-img {
+            transition: transform 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
+        }
+
+        .zoom-img:hover {
+            transform: scale(1.1); /* Phóng to ảnh lên 1.2 lần khi hover */
+        }
+    </style>
 </head>
 <body style="background-color:#FFF4EA; color:#462424;font-family:'Nunito Sans';">
 <section layout:fragment="content" class="container-fluid p-0">
@@ -33,8 +42,10 @@
                         <div class="col-2" th:each="cat, innerStat : ${categories}"
                              th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 6}">
                             <div>
-                                <img src="/Brand.png" class="card-img-top img-fluid" alt="Image not found">
-                                <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
+                                <a th:href="@{/homepage/category/filter(categoryId=${cat.id})}" style="text-decoration: none; color: inherit">
+                                    <img src="/Brand.png" class="card-img-top img-fluid " alt="Image not found">
+                                    <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -53,75 +64,41 @@
             </button>
         </div>
     </div>
+<!--    Cái Shop By Category trên này là vì mục đích test giao diện vì bên tui ko có csdl cho brand-->
+<!--    Cái dưới này mới là Brand-->
 
-    <div class="container mt-5">
-        <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Brand</h2> <!-- Title của mục -->
-        <div id="categoryCarousel2" class="carousel carousel-dark slide" data-bs-ride="carousel"> <!-- Khung Carousel -->
+    <div class="container mt-4">
+        <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Category</h2> <!-- Title của mục -->
+        <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel"> <!-- Khung Carousel -->
             <div class="carousel-inner">
-                <!-- Vòng lặp để tạo từng item của carousel -->
-                <!-- Đoạn th:each dùng để đếm từng phần tử trong categories -->
-                <!-- iterStat % 6 để tạo điều kiện là cứ hết 6 item sẽ tạo carousel mới -->
-                <div th:each="category, iterStat : ${categories}"
-                     th:if="${iterStat.index % 6 == 0}"
-                     th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}"> <!-- iterStat kiểm tra phần từ đầu tiên và sau đó chỉ định active -->
+                <div th:each="brand, iterStat : ${brands}"
+                     th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}">
+                    <!-- Thêm điều kiện để chỉ định item active -->
                     <div class="row">
-                        <!-- Hiển thị 6 mục mỗi carousel-item -->
-                        <div class="col-2" th:each="cat, innerStat : ${categories}"
-                             th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 6}">
+                        <div class="col" th:each="brand : ${brands}">
                             <div>
-                                <img src="/Brand.png" class="card-img-top img-fluid" alt="Image not found">
-                                <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
+                                <a th:href="@{/homepage/brand/filter(brandId=${brand.id})}" style="text-decoration: none; color: inherit">
+                                    <img th:src="${brand.image}" class="card-img-top img-fluid zoom-img" alt="Image not found">
+                                    <h5 class="card-title text-center mt-2" th:text="${brand.name}">brand Name</h5>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#categoryCarousel2" data-bs-slide="prev"
+            <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev"
                     style="position:absolute;top:50%;transform:translateY(-50%);width:5%;left:-60px">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#categoryCarousel2" data-bs-slide="next"
+            <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next"
                     style="position:absolute;top:50%;transform:translateY(-50%);width:5%;right:-60px">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
     </div>
-<!--    Cái Shop By Category trên này là vì mục đích test giao diện vì bên tui ko có csdl cho brand-->
-<!--    Cái dưới này mới là Brand-->
-
-<!--    <div class="container mt-4">-->
-<!--        <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Category</h2> &lt;!&ndash; Title của mục &ndash;&gt;-->
-<!--        <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel"> &lt;!&ndash; Khung Carousel &ndash;&gt;-->
-<!--            <div class="carousel-inner">-->
-<!--                <div th:each="brand, iterStat : ${brands}"-->
-<!--                     th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}">-->
-<!--                    &lt;!&ndash; Thêm điều kiện để chỉ định item active &ndash;&gt;-->
-<!--                    <div class="row">-->
-<!--                        <div class="col" th:each="brand : ${brands}">-->
-<!--                            <div>-->
-<!--                                <img th:src="${brand.image}" class="card-img-top img-fluid" alt="Image not found">-->
-<!--                                <h5 class="card-title text-center mt-2" th:text="${brand.name}">Category Name</h5>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <button class="carousel-control-prev" type="button" data-bs-target="#brandCarousel" data-bs-slide="prev"-->
-<!--                    style="position:absolute;top:50%;transform:translateY(-50%);width:5%;left:-60px">-->
-<!--                <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
-<!--                <span class="visually-hidden">Previous</span>-->
-<!--            </button>-->
-<!--            <button class="carousel-control-next" type="button" data-bs-target="#brandCarousel" data-bs-slide="next"-->
-<!--                    style="position:absolute;top:50%;transform:translateY(-50%);width:5%;right:-60px">-->
-<!--                <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
-<!--                <span class="visually-hidden">Next</span>-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
 
     <!--Popular Product-->
     <div class="container-fluid" style="background-color:#C96868">
@@ -164,7 +141,9 @@
                                                 <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
                                             </a>
                                             <span>
-                                                <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
+                                                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                </a>
                                             </span>
                                         </div>
                                     </div>
@@ -222,7 +201,9 @@
                                                 <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
                                             </a>
                                             <span>
-                                                <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
+                                                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                </a>
                                             </span>
                                         </div>
                                     </div>
@@ -283,8 +264,10 @@
                                             <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
                                         </a>
                                         <span>
-                                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
-                                </span>
+                                            <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
+                                                <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                            </a>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

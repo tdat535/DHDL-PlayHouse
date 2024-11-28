@@ -1,6 +1,7 @@
 package com.viendong.webbanhang.service;
 
 import com.viendong.webbanhang.Role;
+import com.viendong.webbanhang.model.Product;
 import com.viendong.webbanhang.model.User;
 import com.viendong.webbanhang.repository.IRoleRepository;
 import com.viendong.    webbanhang.repository.IUserRepository;
@@ -15,9 +16,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -65,5 +69,40 @@ public class UserService implements UserDetailsService {
     }
     public Page<User> findUsersWithPagination(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    public User getCurrentUser() {
+        // Get the username of the currently authenticated user
+        String username = getCurrentUsername();
+
+        // Retrieve and return the User entity from the repository based on the username
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    private String getCurrentUsername() {
+        // Get the currently authenticated user from SecurityContextHolder
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        throw new RuntimeException("User not authenticated");
+    }
+
+
+    private Set<Product> favoriteProducts = new HashSet<>();
+
+    public Set<Product> getFavoriteProducts(User user) {
+        return user.getFavoriteProducts();
+    }
+
+    public void addToFavorites(User user, Product product) {
+        user.addToFavorites(product);
+        userRepository.save(user);  // Save the user with the updated favorites list
+    }
+
+    public void removeFromFavorites(User user, Product product) {
+        user.removeFromFavorites(product);
+        userRepository.save(user);  // Save the user with the updated favorites list
     }
 }

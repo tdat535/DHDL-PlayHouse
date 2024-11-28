@@ -4,10 +4,13 @@
     import com.viendong.webbanhang.model.Order;
     import com.viendong.webbanhang.service.CartService;
     import com.viendong.webbanhang.service.OrderService;
+    import com.viendong.webbanhang.service.QRCodeService;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
+    import com.google.zxing.WriterException;
+    import com.google.zxing.common.BitMatrix;
 
     import java.util.List;
 
@@ -17,11 +20,13 @@
 
         private final OrderService orderService;
         private final CartService cartService;
+        private final QRCodeService qrCodeService; // Add this line to inject the QRCodeService
 
         @Autowired
-        public OrderController(OrderService orderService, CartService cartService) {
+        public OrderController(OrderService orderService, CartService cartService, QRCodeService qrCodeService) {
             this.orderService = orderService;
             this.cartService = cartService;
+            this.qrCodeService = qrCodeService;
         }
 
         @GetMapping("/checkout")
@@ -35,18 +40,38 @@
             System.out.println("Shipping Fee: " + shippingFee);
             System.out.println("Total: " + total);
 
-
+            // Retrieve cart items
             List<CartItem> cartItems = cartService.getCartItems();
             if (cartItems.isEmpty()) {
-                return "redirect:/cart"; // Giỏ hàng trống, chuyển về giỏ hàng
+                return "redirect:/cart"; // If the cart is empty, redirect to cart
             }
 
+            // Prepare payment URI for QR Code (similar to your POST method)
+            String paymentUri = "00020101021138570010A00000072701270006970422011300008003860380208QRIBFTTA53037045802VN630404fa";
+            String qrCodeBase64 = null;
+            try {
+                // Generate QR code
+                qrCodeBase64 = qrCodeService.generateQRCodeBase64(paymentUri);
+            } catch (WriterException e) {
+                // Handle error
+                e.printStackTrace();
+                model.addAttribute("errorMessage", "There was an error generating the QR code.");
+            }
+
+            // Add model attributes for cart and payment details
             model.addAttribute("cartItems", cartItems);
-            model.addAttribute("totalProduct", totalProduct); // Tổng tiền sản phẩm
-            model.addAttribute("total", total); // Truyền tổng tiền sang view
+            model.addAttribute("totalProduct", totalProduct); // Total price of products
+            model.addAttribute("total", total); // Total amount to be paid
             model.addAttribute("shippingFee", shippingFee);
-            return "cart/checkout";
+
+            // Add QR code to model if it's generated
+            if (qrCodeBase64 != null) {
+                model.addAttribute("qrCodeBase64", qrCodeBase64);
+            }
+
+            return "cart/checkout"; // The checkout page where you want to show the QR code
         }
+
 
         @PostMapping("/submit")
         public String submitOrder(@RequestParam String customer_name,
@@ -68,7 +93,24 @@
             double shippingFee = cartService.getShippingFee(); // Lấy phí vận chuyển
             double total = totalProduct + shippingFee; // Tổng tiền (sản phẩm + vận chuyển)
 
-            // Gửi các giá trị vào model để hiển thị trên trang xác nhận
+            // Tạo URI để mở ứng dụng MB Bank với các thông tin cần thiết
+            String paymentUri = "00020101021138570010A00000072701270006970422011300008003860380208QRIBFTTA53037045802VN630404fa";
+
+            String qrCodeBase64 = null;
+            try {
+                // Tạo mã QR từ URI
+                qrCodeBase64 = qrCodeService.generateQRCodeBase64(paymentUri);
+            } catch (WriterException e) {
+                // Xử lý ngoại lệ ở đây, ví dụ như log lỗi hoặc trả về một trang thông báo lỗi
+                e.printStackTrace(); // In lỗi ra console
+                model.addAttribute("errorMessage", "There was an error generating the QR code.");
+                return "cart/error"; // Chuyển sang trang thông báo lỗi nếu cần
+            }
+
+            // Gửi mã QR vào model
+            model.addAttribute("qrCodeBase64", qrCodeBase64);
+
+            // Gửi các thông tin vào view để hiển thị
             model.addAttribute("totalProduct", totalProduct);
             model.addAttribute("shippingFee", shippingFee);
             model.addAttribute("total", total);
@@ -77,7 +119,7 @@
             orderService.createOrder(customer_name, email, phone_number, address, payment_method, note, cartItems);
 
             // Chuyển tới trang xác nhận đơn hàng
-            return "redirect:/order/confirmation";
+            return "cart/order-confirmation";
         }
 
         @GetMapping("/confirmation")

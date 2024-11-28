@@ -6,7 +6,8 @@
   <meta charset="UTF-8">
   <title th:text="${title} ?:'Your Cart'">Place Order</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/qrcode.js" defer></script>
 </head>
 <body>
 <section layout:fragment="content" class="container mt-3">
@@ -31,7 +32,7 @@
         <label for="address">Address</label>
       </div>
       <div class="form-floating mb-3">
-        <select class="form-select" id="payment_method" name="payment_method" aria-label="Floating label select example">
+        <select class="form-select" id="payment_method" name="payment_method" aria-label="Payment Method">
           <option value="Pay With Cash">Pay With Cash</option>
           <option value="Mobile Banking">Mobile Banking</option>
         </select>
@@ -56,8 +57,7 @@
             <span th:if="${shippingFee == 0}">(Free Shipping)</span>
             <span th:if="${shippingFee == 30000}">(Fast Shipping)</span>
           </div>
-            <span th:text="${shippingFee} + 'đ'" ></span>
-
+          <span th:text="${shippingFee} + 'đ'" ></span>
         </li>
         <li class="list-group-item py-4">
           <div class="d-flex justify-content-between">
@@ -65,15 +65,58 @@
             <span class="fs-5 fw-bold" th:text="${total} + 'đ'"></span>
           </div>
           <div class="d-grid mt-5">
-            <button type="submit" class="btn btn-primary">Submit Order</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit Order</button>
           </div>
         </li>
       </ul>
-      <!--      <a th:href="@{/cart/clear}" class="btn btn-secondary">Clear Cart</a>-->
-      <!--      <a th:href="@{/order/checkout}" class="btn btn-primary">Check Out</a>-->
+    </div>
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold text-primary" id="paymentModalLabel">
+              Scan QR Code to Complete Payment
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <!-- QR Code Section -->
+            <div th:if="${qrCodeBase64}" class="d-flex flex-column align-items-center">
+              <h6 class="fw-semibold mb-3">
+                Use your banking app to scan the QR code below. Confirm details before proceeding.
+              </h6>
+              <div class="p-3 bg-light border rounded">
+                <img th:src="${qrCodeBase64}" alt="QR code for payment" class="img-fluid shadow-sm" style="width: 300px; height: 300px;">
+              </div>
+            </div>
+
+            <!-- Error Handling -->
+            <div th:if="${qrCodeBase64 == null}" class="text-center text-danger">
+              <h6 class="fw-bold">Failed to Generate QR Code</h6>
+              <p>Please try again later or choose another payment method.</p>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary" id="finalSubmitBtn">
+              Submit Order
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </form>
+
 </section>
+
 </body>
 </html>

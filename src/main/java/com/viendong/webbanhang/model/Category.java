@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @RequiredArgsConstructor
@@ -20,4 +22,7 @@ public class Category {
 
     @NotBlank(message = "Tên là bắt buộc")
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 }

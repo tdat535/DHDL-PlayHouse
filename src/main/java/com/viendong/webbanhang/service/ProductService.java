@@ -1,8 +1,10 @@
 package com.viendong.webbanhang.service;
 import com.viendong.webbanhang.model.OrderDetail;
 import com.viendong.webbanhang.model.Product;
+import com.viendong.webbanhang.model.User;
 import com.viendong.webbanhang.repository.OrderDetailRepository;
 import com.viendong.webbanhang.repository.ProductRepository;
+import com.viendong.webbanhang.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,23 @@ import java.util.Optional;
 public class ProductService {
 
     private  ProductRepository productRepository;
+    private final UserRepository userRepository; // Add UserRepository
 
     private final OrderDetailRepository orderDetailRepository;
 
 
-    public ProductService (ProductRepository productRepository, OrderDetailRepository orderDetailRepository) {
+    public ProductService (ProductRepository productRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.userRepository = userRepository;
+    }
+
+    public List<Product> getProductsByCategory(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    public List<Product> getProductsByBrand(Long brandId) {
+        return productRepository.findByBrandId(brandId);
     }
 
     public int calculateTotalQuantitySold() {
@@ -99,5 +111,15 @@ public class ProductService {
     }
     public long countAllProducts() {
         return productRepository.count(); // Sử dụng phương thức count() đã có trong JpaRepository
+    }
+
+    public long countFavoriteProducts(Long userId) {
+        // Find the user by ID
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            // Assuming the user has a 'favoriteProducts' set containing all their favorite products
+            return user.get().getFavoriteProducts().size();
+        }
+        return 0;
     }
 }

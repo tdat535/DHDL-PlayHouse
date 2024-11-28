@@ -81,7 +81,7 @@
           <div class="mb-3">
             <h3>Board Games</h3>
             <div class="container d-flex justify-content-between py-2 px-4" style="background-color:#C96868; color: #FAF0F0; border-radius:99px">
-              <span>Showing 15 products</span>
+              <span>Showing <span th:text="${productCount}">0</span> products</span>
               <div class="d-flex">
                 <span class="me-2">Sort By:</span>
                 <div class="dropdown">
@@ -102,7 +102,7 @@
             <div class="col" th:each="product : ${products}">
               <div class="shadow card" style="width: 100%; height: 25rem; position: relative; overflow: hidden;">
                 <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
-                  <img src="../product1.png" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
+                  <img th:src="${product.image}" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
                 <!-- Cố định chiều cao cho card-body -->
                 <div class="card-body px-3 py-3 product-body" style="height: 150px; overflow: hidden;">
