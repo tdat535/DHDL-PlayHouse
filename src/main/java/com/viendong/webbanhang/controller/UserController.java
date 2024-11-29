@@ -1,9 +1,11 @@
 package com.viendong.webbanhang.controller;
 import com.viendong.webbanhang.model.User;
+import com.viendong.webbanhang.service.OderDetailService;
 import com.viendong.webbanhang.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/authentication")
-@RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/login")
     public String login() {

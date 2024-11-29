@@ -5,22 +5,24 @@ import com.viendong.webbanhang.model.Order;
 import com.viendong.webbanhang.model.OrderDetail;
 import com.viendong.webbanhang.repository.OrderDetailRepository;
 import com.viendong.webbanhang.repository.OrderRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class OrderService {
-    @Autowired
     private final OrderRepository orderRepository;
+
+    @Autowired
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     @Autowired
     private OrderDetailRepository orderDetailRepository;
     @Autowired

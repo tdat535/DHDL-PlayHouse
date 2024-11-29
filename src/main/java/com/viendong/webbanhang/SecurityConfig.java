@@ -15,14 +15,19 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
+
     private final UserService userService;
     private final CustomAuthenticationSuccessHandler successHandler;
 
+    public SecurityConfig(UserService userService, CustomAuthenticationSuccessHandler successHandler) {
+        this.userService = userService;
+        this.successHandler = successHandler;
+    }
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return new  UserService (); // Use the existing instance
+        return userService; // Trả về instance đã được inject
     }
 
     @Bean
@@ -44,44 +49,53 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**")
-                        .permitAll() // Cho phép truy cập không cần xác thực.
-                        .requestMatchers("/products/edit/**", "/products/add", "/products/delete")
-                        .hasAnyAuthority("ADMIN") // Chỉ cho phép ADMIN truy cập.
+                        .permitAll()
+                        .requestMatchers("/products/**", "/dashboard/**", "/categories/**", "/cart/**")
+                        .hasAnyAuthority("ADMIN")
                         .requestMatchers("/api/**")
-                        .permitAll() // API mở cho mọi người dùng.
-                        .anyRequest().authenticated() // Bất kỳ yêu cầu nào khác cần xác thực.
+                        .permitAll()
+                        .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/authentication/login") // Trang chuyển hướng sau khi đăng xuất.
-                        .deleteCookies("JSESSIONID") // Xóa cookie.
-                        .invalidateHttpSession(true) // Hủy phiên làm việc.
-                        .clearAuthentication(true) // Xóa xác thực.
+                        .logoutSuccessUrl("/authentication/login")
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                         .permitAll()
                 )
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/authentication/login") // Trang đăng nhập.
-                        .loginProcessingUrl("/login") // URL xử lý đăng nhập.
-                        .successHandler(successHandler) // Sử dụng successHandler
-                        .failureUrl("/login?error") // Trang đăng nhập thất bại.
+                        .loginPage("/authentication/login")
+                        .loginProcessingUrl("/login")
+                        .successHandler(successHandler)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .rememberMe(rememberMe -> rememberMe
                         .key("vanlang")
                         .rememberMeCookieName("vanlang")
-                        .tokenValiditySeconds(24 * 60 * 60) // Thời gian nhớ đăng nhập.
+                        .tokenValiditySeconds(24 * 60 * 60)
                         .userDetailsService(userDetailsService())
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/403") // Trang báo lỗi khi truy cập không được phép.
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("text/html; charset=UTF-8");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("""
+                                        <script>
+                                            alert("Bạn không có quyền truy cập vào tài nguyên này!");
+                                            window.history.back();
+                                        </script>
+                                    """);
+                        })
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .maximumSessions(1) // Giới hạn số phiên đăng nhập.
-                        .expiredUrl("/authentication/login") // Trang khi phiên hết hạn.
+                        .maximumSessions(1)
+                        .expiredUrl("/authentication/login")
                 )
                 .httpBasic(httpBasic -> httpBasic
-                        .realmName("vanlang") // Tên miền cho xác thực cơ bản.
+                        .realmName("vanlang")
                 )
-                .build(); // Xây dựng và trả về chuỗi lọc bảo mật.
+                .build();
     }
 }

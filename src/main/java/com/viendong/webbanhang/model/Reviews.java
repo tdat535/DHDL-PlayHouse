@@ -24,9 +24,51 @@ public class Reviews {
     @Column(nullable = false)
     private String name;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     @Column(nullable = false)
     private int rating;
 
+    public String getComment() {
+        return comment;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     @Column(nullable = false)
     private String comment;
+
+
 }

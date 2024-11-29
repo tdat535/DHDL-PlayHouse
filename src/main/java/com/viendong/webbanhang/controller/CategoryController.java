@@ -3,7 +3,6 @@ package com.viendong.webbanhang.controller;
 import com.viendong.webbanhang.model.Category;
 import com.viendong.webbanhang.service.CategoryService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class CategoryController {
-    @Autowired
+
     private final CategoryService categoryService;
+
+    @Autowired
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
     @GetMapping("/categories/add")
     public String showAddForm(Model model) {
         model.addAttribute("category", new Category());
@@ -39,7 +43,7 @@ public class CategoryController {
     public String listCategories(Model model) {
         List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
-        long CategoryCount=categoryService.countAllCategory();
+        long CategoryCount = categoryService.countAllCategory();
         model.addAttribute("CategoryCount", CategoryCount);
         return "/categories/categories-list";
     }
@@ -72,5 +76,4 @@ public class CategoryController {
         model.addAttribute("categories", categoryService.getAllCategories());
         return "redirect:/categories";
     }
-
 }

@@ -24,10 +24,42 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     @NotBlank(message = "Name is required")
     @Column(name = "name", length = 50, nullable = false)
     @Size(max = 50, message = "Name must be less than 50 characters")
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
 
     @Size(max = 250, message = "Description must be less than 250 characters")
     @Column(name = "description", length = 250)

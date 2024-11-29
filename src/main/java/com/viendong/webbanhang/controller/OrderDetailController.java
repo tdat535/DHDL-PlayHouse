@@ -2,6 +2,7 @@ package com.viendong.webbanhang.controller;
 
 import com.viendong.webbanhang.model.OrderDetail;
 import com.viendong.webbanhang.model.User;
+import com.viendong.webbanhang.service.CategoryService;
 import com.viendong.webbanhang.service.OderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class OrderDetailController {
-    @Autowired
+
     private final OderDetailService oderDetailService;
+
+    @Autowired
+    public OrderDetailController(OderDetailService oderDetailService) {
+        this.oderDetailService = oderDetailService;
+    }
 
     @GetMapping("/api/order-details/{id}")
     @ResponseBody
