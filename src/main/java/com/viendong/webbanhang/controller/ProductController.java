@@ -1,11 +1,9 @@
 package com.viendong.webbanhang.controller;
 
+import com.viendong.webbanhang.model.CartItem;
 import com.viendong.webbanhang.model.Product;
 import com.viendong.webbanhang.model.Reviews;
-import com.viendong.webbanhang.service.BrandService;
-import com.viendong.webbanhang.service.CategoryService;
-import com.viendong.webbanhang.service.ProductService;
-import com.viendong.webbanhang.service.ReviewService;
+import com.viendong.webbanhang.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +33,8 @@ public class ProductController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private CartService cartService;
 
     public ProductController(ProductService productService, CategoryService categoryService, ReviewService reviewService ) {
         this.productService = productService;
@@ -147,6 +147,15 @@ public class ProductController {
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrand());
+
+        List<CartItem> cartItems = cartService.getCartItems();
+        model.addAttribute("cartItems", cartItems);
+
+        // Tính tổng số lượng các sản phẩm trong giỏ hàng
+        int totalItems = (int) cartItems.stream().count();
+
+        // Thêm tổng số lượng vào mô hình
+        model.addAttribute("totalItems", totalItems);
 
         return "products/productDetail";
     }

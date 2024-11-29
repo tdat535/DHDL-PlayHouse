@@ -102,7 +102,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void removeFromFavorites(User user, Product product) {
-        user.removeFromFavorites(product);
-        userRepository.save(user);  // Save the user with the updated favorites list
+        user.getFavoriteProducts().remove(product);
+        userRepository.save(user); // Cập nhật danh sách yêu thích trong cơ sở dữ liệu
     }
+
 }

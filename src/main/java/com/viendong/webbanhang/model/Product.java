@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Setter
 @Getter
 @RequiredArgsConstructor
@@ -105,5 +108,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
+
+    @ManyToMany(mappedBy = "favoriteProducts")
+    private Set<User> favoritedByUsers = new HashSet<>();
 
 }

@@ -148,8 +148,10 @@ public class User implements UserDetails {
         return roles;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)  // Lazy loading of favorite products
-    @JoinTable(name = "user_favorites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_favorite_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
     private Set<Product> favoriteProducts = new HashSet<>();
 
     public Set<Product> getFavoriteProducts() {

@@ -1,0 +1,8 @@
+.fixed-alert {
+    position: fixed;
+    top: 20px;          /* Đặt cách đầu trang 20px */
+    right: 20px;        /* Đặt cách cạnh phải 20px */
+    z-index: 1050;      /* Đảm bảo thông báo xuất hiện trên các phần tử khác */
+    width: 300px;       /* Thiết lập chiều rộng cho thông báo */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Thêm bóng đổ nhẹ */
+}

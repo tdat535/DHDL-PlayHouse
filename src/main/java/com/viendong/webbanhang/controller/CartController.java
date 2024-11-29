@@ -1,6 +1,7 @@
 package com.viendong.webbanhang.controller;
 
 import com.viendong.webbanhang.model.CartItem;
+import com.viendong.webbanhang.model.Product;
 import com.viendong.webbanhang.service.BrandService;
 import com.viendong.webbanhang.service.CartService;
 import com.viendong.webbanhang.service.CategoryService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -31,6 +33,11 @@ public class CartController {
         List<CartItem> cartItems = cartService.getCartItems();
         model.addAttribute("cartItems", cartItems);
 
+        // Tính tổng số lượng các sản phẩm trong giỏ hàng
+        int totalItems = (int) cartItems.stream().count();
+
+        // Thêm tổng số lượng vào mô hình
+        model.addAttribute("totalItems", totalItems);
         // Tổng giá trị sản phẩm
         double totalProduct = cartService.calculateTotalProduct();
 
@@ -50,10 +57,27 @@ public class CartController {
         return "/cart/cart";
     }
 
+
+    // Controller method for Buy Now
+    // Controller method for Buy Now (POST)
     @PostMapping("/add")
-    public String addToCart (@RequestParam Long productId, @RequestParam int quantity) {
-        cartService.addToCart(productId, quantity);
-        return "redirect:/cart";
+    public String buyNow(@RequestParam Long productId, @RequestParam int quantity) {
+        cartService.addToCart(productId, quantity);  // Add product to cart
+        return "redirect:/cart";  // Redirect to the cart page
+    }
+
+    // Controller method for Add to Cart (GET)
+    @GetMapping("/addToCart")
+    public String addToCart(@RequestParam Long productId, @RequestParam int quantity, RedirectAttributes redirectAttributes) {
+        Optional<Product> productOptional = productService.getProductById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            cartService.addToCart(productId, quantity);
+            redirectAttributes.addFlashAttribute("message", "Bạn đã thêm " + quantity + " sản phẩm '" + product.getName() + "' vào giỏ hàng.");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm.");
+        }
+        return "redirect:/products/productDetail/" + productId;  // Chuyển hướng lại trang chi tiết sản phẩm
     }
 
     @GetMapping("/remove/{productId}")
@@ -76,21 +100,40 @@ public class CartController {
 
     // Giảm số lượng sản phẩm
     @GetMapping("/decreaseQuantity/{productId}")
-    public String decreaseQuantity(@PathVariable Long productId) {
-        cartService.decreaseQuantity(productId);
+    public String decreaseQuantity(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
+        cartService.decreaseQuantity(productId, redirectAttributes);
         return "redirect:/cart";
     }
 
     @PostMapping("/updateQuantity/{productId}")
     public String updateQuantity(@PathVariable Long productId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
         if (quantity < 1) {
-            redirectAttributes.addFlashAttribute("error", "Quantity must be at least 1");
+            // Nếu quantity < 1, xóa sản phẩm khỏi giỏ hàng và quay lại trang giỏ hàng
+            cartService.removeFromCart(productId);
+            redirectAttributes.addFlashAttribute("message", "Sản phẩm đã bị xóa khỏi giỏ hàng.");
             return "redirect:/cart";
         }
-        cartService.updateQuantity(productId, quantity);
-        redirectAttributes.addFlashAttribute("message", "Cart updated successfully!");
+
+        // Kiểm tra sự tồn tại của sản phẩm
+        Optional<Product> productOptional = productService.getProductById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+
+            // Cập nhật số lượng trong giỏ hàng
+            cartService.updateQuantity(productId, quantity);
+
+            // Thêm thông báo thành công sau khi cập nhật giỏ hàng
+            redirectAttributes.addFlashAttribute("message", "Bạn đã cập nhật số lượng của sản phẩm ' " + product.getName() + " ' là: " + quantity);
+        } else {
+            // Thông báo lỗi nếu không tìm thấy sản phẩm
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm.");
+        }
+
+        // Quay lại trang giỏ hàng sau khi cập nhật
         return "redirect:/cart";
     }
+
+
 
     @PostMapping("/updateShipping")
     public String updateShipping(@RequestParam("shippingOption") double shippingFee, RedirectAttributes redirectAttributes) {

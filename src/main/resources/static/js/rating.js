@@ -21,3 +21,11 @@ form.addEventListener('submit', (e) => {
         alert('Please select a rating!');
     }
 });
+
+
+document.getElementById('addToCartButton').addEventListener('click', function(e) {
+    e.preventDefault(); // Ngừng hành động mặc định của link
+    var quantity = document.getElementById('quantity').value; // Lấy giá trị quantity từ input
+    var productId = document.querySelector('input[name="productId"]').value; // Lấy productId
+    window.location.href = "/cart/addToCart?productId=" + productId + "&quantity=" + quantity; // Chuyển hướng với tham số
+});

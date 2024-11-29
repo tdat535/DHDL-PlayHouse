@@ -6,6 +6,7 @@ import com.viendong.webbanhang.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,13 +57,14 @@ public class CartService {
         }
     }
 
-    public void decreaseQuantity(Long productId) {
+    public void decreaseQuantity(Long productId, RedirectAttributes redirectAttributes) {
         for (CartItem item : cartItems) {
             if (item.getProduct().getId().equals(productId)) {
                 if (item.getQuantity() > 1) {
                     item.setQuantity(item.getQuantity() - 1); // Decrease quantity
                 } else {
                     removeFromCart(productId); // Remove if quantity is 1
+                    redirectAttributes.addFlashAttribute("message", "Sản phẩm đã bị xóa khỏi giỏ hàng.");
                 }
                 return;
             }

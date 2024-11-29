@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>DHDL</title>
-    <link rel="stylesheet" href="/css/home-style.css">
+<!--    <link rel="stylesheet" href="/css/home-style.css">-->
     <style>
         .zoom-img {
             transition: transform 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
@@ -14,6 +14,9 @@
             transform: scale(1.1); /* Phóng to ảnh lên 1.2 lần khi hover */
         }
     </style>
+
+    <script src="/js/alert.js" defer></script>
+    <link rel="stylesheet" href="/css/alert.css">
 </head>
 <body style="background-color:#FFF4EA; color:#462424;font-family:'Nunito Sans';">
 <section layout:fragment="content" class="container-fluid p-0">
@@ -43,7 +46,7 @@
                              th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 6}">
                             <div>
                                 <a th:href="@{/homepage/category/filter(categoryId=${cat.id})}" style="text-decoration: none; color: inherit">
-                                    <img src="/Brand.png" class="card-img-top img-fluid " alt="Image not found">
+                                    <img src="/Brand.png" class="card-img-top img-fluid zoom-img" alt="Image not found">
                                     <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
                                 </a>
                             </div>
@@ -275,6 +278,22 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <!-- Hiển thị thông báo thành công -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 </section>

@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="/css/product-detail.css">
 
     <script src="/js/rating.js" defer></script>
-
+    <script src="/js/alert.js" defer></script>
+    <link rel="stylesheet" href="/css/alert.css">
 </head>
 
 <body style="color:#462424;font-family:'Nunito Sans';">
@@ -75,23 +76,32 @@
 
                 <!-- Quantity Selection -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <label class="me-3" for="quantity" style="font-weight:bolder;">Quantity:</label>
+                    <label class="me-3" for="quantity" style="font-weight: bolder;">Quantity:</label>
                     <input type="number" class="form-control w-25" name="quantity" id="quantity" value="1" min="1">
                 </div>
 
-                <!-- Add to Cart Button -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <button type="submit" class="btn btn-lg d-flex align-items-center gap-2" style="background-color:#C96868; color: white">
+                <!-- Buy Now Button -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <button type="submit" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #C96868; color: white">
                         <i class="bi bi-bag-fill me-2"></i>
-                        <span>Add to Cart</span>
-                    </button>
-
-                    <!-- Favorite Button -->
-                    <button type="button" class="btn btn-outline-danger">
-                        <i class="bi bi-heart-fill"></i>
+                        <span>Buy Now</span>
                     </button>
                 </div>
+
+                <a href="#" id="addToCartButton" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #007bff; color: white">
+                    <i class="bi bi-cart-check me-2"></i>
+                    <span>Add to Cart</span>
+                </a>
             </form>
+
+            <!-- Add to Cart Button (GET request) -->
+
+
+            <!-- Favorite Button -->
+            <button type="button" class="btn btn-outline-danger">
+                <i class="bi bi-heart-fill"></i>
+            </button>
+
         </div>
     </div>
 
@@ -238,6 +248,22 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <!-- Hiển thị thông báo thành công -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 </section>
