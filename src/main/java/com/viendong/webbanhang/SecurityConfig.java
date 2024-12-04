@@ -20,11 +20,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
 
     private final UserService userService;
-    private final CustomAuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(UserService userService, CustomAuthenticationSuccessHandler successHandler) {
+    public SecurityConfig(UserService userService) {
         this.userService = userService;
-        this.successHandler = successHandler;
     }
 
     @Bean
@@ -42,10 +40,6 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://dhdl-playhouse.fly.dev")  // Allow both local and production origins
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*");
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");  // Allow frontend origin
             }
         };
@@ -64,12 +58,12 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**")
+                        .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**", "/order/**")
                         .permitAll()
-                        .requestMatchers("/authentication/recover")  // Add this line
+                        .requestMatchers("/authentication/recover")  // Cho phép truy cập mà không cần xác thực
                         .permitAll()
-                        .requestMatchers("/products/add", "/dashboard/**", "/categories/add", "/brand/add")
-                        .authenticated()
+                        .requestMatchers("/products/add", "/categories/add", "/brand/add", "/dashboard")
+                        .hasAnyAuthority("ADMIN")
                         .requestMatchers("/api/**")
                         .permitAll()
                         .anyRequest().authenticated()
@@ -85,9 +79,16 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/authentication/login")
                         .loginProcessingUrl("/login")
-                        .successHandler(successHandler)
+                        .successHandler((request, response, authentication) -> {
+                            // Lấy vai trò của người dùng từ Authentication object
+                            if (authentication.getAuthorities().stream()
+                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"))) {
+                                response.sendRedirect("/dashboard"); // Chuyển hướng đến trang dashboard nếu là admin
+                            } else {
+                                response.sendRedirect("/homepage"); // Chuyển hướng đến trang homepage nếu là user
+                            }
+                        })
                         .failureUrl("/authentication/login?error")
-                        .failureUrl("/authentication/login?error") // Cập nhật URL lỗi cho đúng trang tùy chỉnh
                         .permitAll()
                 )
                 .rememberMe(rememberMe -> rememberMe
