@@ -42,23 +42,15 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-<<<<<<< HEAD
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:3000", "https://java-dhdl-playhouse.onrender.com")  // Allow both local and production origins
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
-=======
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");  // Allow frontend origin
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
             }
         };
     }
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         var auth = new DaoAuthenticationProvider();
@@ -94,11 +86,8 @@ public class SecurityConfig {
                         .loginPage("/authentication/login")
                         .loginProcessingUrl("/login")
                         .successHandler(successHandler)
-<<<<<<< HEAD
                         .failureUrl("/authentication/login?error")
-=======
                         .failureUrl("/authentication/login?error") // Cập nhật URL lỗi cho đúng trang tùy chỉnh
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
                         .permitAll()
                 )
                 .rememberMe(rememberMe -> rememberMe
@@ -112,22 +101,12 @@ public class SecurityConfig {
                             response.setContentType("text/html; charset=UTF-8");
                             response.setCharacterEncoding("UTF-8");
                             response.getWriter().write("""
-<<<<<<< HEAD
                                 <script>
                                     alert("Bạn không có quyền truy cập vào tài nguyên này!");
                                     window.history.back();
                                 </script>
                             """);
                         })
-
-=======
-                                        <script>
-                                            alert("Bạn không có quyền truy cập vào tài nguyên này!");
-                                            window.history.back();
-                                        </script>
-                                    """);
-                        })
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
                         .maximumSessions(1)

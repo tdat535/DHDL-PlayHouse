@@ -7,15 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-<<<<<<< HEAD
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/dashboard")
-=======
-
-@Controller
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
 public class DashboardController {
     @Autowired
     private ProductService productService;
@@ -28,11 +23,7 @@ public class DashboardController {
         this.oderDetailService = oderDetailService;
     }
 
-<<<<<<< HEAD
     @GetMapping()
-=======
-    @GetMapping("/dashboard")
->>>>>>> 30773b56cebec0a1c0a8481f7e309ffb08c20e61
     public String showDashboard(Model model) {
         long productCount = productService.countProducts();
         int totalQuantitySold = productService.calculateTotalQuantitySold();
