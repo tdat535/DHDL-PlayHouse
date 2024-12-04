@@ -29,9 +29,33 @@ public class User implements UserDetails {
     @NotBlank(message = "Username is required")
     @Size(min = 1, max = 50, message = "Username must be between 1 and 50 characters")
     private String username;
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
     @Column(name = "password", length = 250)
     @NotBlank(message = "Password is required")
     private String password;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    @Column(name = "real_name", length = 100)
+    @Size(max = 100, message = "Real Name must be less than or equal to 100 characters")
+    private String realName; // New field for Real Name
+    @Column(name = "address", length = 100)
+    @Size(max = 100, message = "Real Name must be less than or equal to 100 characters")
+    private String address; // New field for Real Name
     @Column(name = "email", length = 50, unique = true)
     @NotBlank(message = "Email is required")
     @Size(min = 1, max = 50, message = "Email must be between 1 and 50 characters")

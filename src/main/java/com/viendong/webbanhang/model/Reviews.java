@@ -13,6 +13,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "reviews")
 public class Reviews {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +24,32 @@ public class Reviews {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = true)
+    private int rating;
+
+    @Column(nullable = false)
+    private String comment;
+
+    public Long getId() {
+        return id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -43,32 +70,4 @@ public class Reviews {
     public void setComment(String comment) {
         this.comment = comment;
     }
-
-    @Column(nullable = false)
-    private int rating;
-
-    public String getComment() {
-        return comment;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    @Column(nullable = false)
-    private String comment;
-
-
 }

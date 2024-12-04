@@ -5,6 +5,7 @@ import com.viendong.webbanhang.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class ProductApiController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    public Product createProduct(@RequestBody Product product, RedirectAttributes redirectAttributes) {
+        return productService.addProduct(product, redirectAttributes);
     }
 
     @GetMapping("/{id}")
@@ -32,12 +33,12 @@ public class ProductApiController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails, RedirectAttributes redirectAttributes) {
         Product product = productService.getProductById(id).orElseThrow(() -> new RuntimeException("Product not found on :: " + id));
         product.setName(productDetails.getName());
         product.setPrice(productDetails.getPrice());
         product.setDescription(productDetails.getDescription());
-        final Product updatedProduct = productService.addProduct(product);
+        final Product updatedProduct = productService.addProduct(product, redirectAttributes);
         return ResponseEntity.ok(updatedProduct);
     }
 

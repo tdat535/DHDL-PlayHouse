@@ -57,13 +57,13 @@
                     </ul>
                 </li>
             </ul>
-            <form class="d-flex col-6 me-auto" role="search">
-                <input class="form-control" type="search" placeholder="Search" aria-label="Search"
-                       style="border-radius:12px">
-                <button class="btn" type="submit" style="background-color:#462424;"><i class="bi bi-search"
-                                                                                       style="color:#FAF0F0;"></i>
+            <form class="d-flex col-6 me-auto" action="/homepage/search" method="get" role="search">
+                <input class="form-control" type="search" name="query" placeholder="Search" aria-label="Search" style="border-radius:12px">
+                <button class="btn" type="submit" style="background-color:#462424; margin-left: 4px; background-color: transparent">
+                    <i class="bi bi-search" style="color:#FAF0F0;"></i>
                 </button>
             </form>
+
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <!-- Thông báo nếu người dùng đã đăng nhập -->
                 <li class="nav-item d-flex align-items-center" sec:authorize="isAuthenticated()">
@@ -79,7 +79,7 @@
 
                 <!-- Icon túi mua sắm -->
                 <li class="nav-item ms-2">
-                    <a class="nav-link" href="/cart" sec:authorize="isAuthenticated()" style="position: relative;">
+                    <a class="nav-link" th:href="@{/order/cart}" sec:authorize="isAuthenticated()" style="position: relative;">
                         <i class="bi bi-bag-fill" style="font-size: 1.25rem;"></i>
                         <!-- Vòng tròn hiển thị số lượng -->
                         <span class="badge bg-danger rounded-circle"
@@ -96,7 +96,13 @@
                        aria-expanded="false" style="font-weight: bolder">
                         <i class="bi bi-person-circle" style="font-size: 1.25rem;"></i>
                     </a>
+
                     <ul class="dropdown-menu dropdown-menu-lg-end">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/homepage/user-information}">
+                                User Information
+                            </a>
+                        </li>
                         <li>
                             <a class="dropdown-item" th:href="@{/homepage/favorite}">
                                 Favorites

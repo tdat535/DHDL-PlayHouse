@@ -104,31 +104,35 @@
                 <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
                   <img th:src="${product.image}" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
-                <!-- Cố định chiều cao cho card-body -->
                 <div class="card-body px-3 py-3 product-body" style="height: 150px; overflow: hidden;">
                   <div>
-                  <span style="font-size: 12px;">
-                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
-                  </span>
                     <span style="font-size: 12px;">
-                    <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
-                  </span>
+                        <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                    </span>
+                    <span style="font-size: 12px;">
+                        <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
+                    </span>
                   </div>
                   <p class="card-text m-0" th:text="${product.name}">Super Mario World™: Mario & Yoshi</p>
                   <h4 class="card-title mb-2" style="font-weight: bold;" th:text="${product.price}">200.000d</h4>
                   <div class="d-flex justify-content-between">
-                    <a href="#" class="btn btn-warning">
-                      <i class="bi bi-bag-fill"></i>
-                      Add to Bag
+                    <form th:action="@{/cart/add}" method="post">
+                      <input type="hidden" name="productId" th:value="${product.id}" />
+                      <input type="hidden" name="quantity" value="1" />
+                      <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-bag-fill"></i>
+                        Add to Bag
+                      </button>
+                    </form>
+                    <a th:href="@{/homepage/favorite/add(productId=${product.id})}" style="text-decoration: none; color: inherit">
+                      <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
                     </a>
-                    <span>
-                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
-                  </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>
@@ -136,31 +140,3 @@
   </section>
 </body>
 </html>
-<!--        <div class="product-list p-0 mt-3 d-flex">-->
-<!--          <div th:each="product : ${products}" class="product-item">-->
-<!--            <div class="card" style="background-color: white; width: 220px;"> &lt;!&ndash; Card với kích thước cố định &ndash;&gt;-->
-<!--              <div style="width:200px; height:180px; overflow:hidden;" class="mx-auto p-2">-->
-<!--                <img src="/mario.png" class="card-img-top img-fluid d-block mx-auto" alt="Product Image" style="width:100%; height:100%; object-fit:contain;">-->
-<!--              </div>-->
-<!--              <div class="card-body">-->
-<!--                <h5 th:text="${product.name}" class="card-title" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h5>-->
-<!--                <h4 class="card-text bold" th:text="${product.price} + 'đ'"></h4>-->
-<!--                <div class="d-flex mb-3">-->
-<!--                      <span style="font-size: 12px;">-->
-<!--                          <i class="bi bi-cake-fill" style=" color:#7EACB5"></i> 18+-->
-<!--                      </span>-->
-<!--                  <span style="font-size: 12px;">-->
-<!--                          <i class="bi bi-star-fill ms-2" style=" color:#fcba03;"></i> 4.4-->
-<!--                      </span>-->
-<!--                </div>-->
-<!--                <div class="d-flex justify-content-between">-->
-<!--                  <button type="button" class="btn btn-warning">-->
-<!--                    <i class="bi bi-bag-fill"></i>-->
-<!--                    <span style="font-size: 12px; font-weight: 500; margin-left: 4px; margin-bottom: 0;">Add to Cart</span>-->
-<!--                  </button>-->
-<!--                  <span><i class="bi bi-heart-fill btn btn-outline-danger custom-icon-size" style="font-size:1rem"></i></span>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->

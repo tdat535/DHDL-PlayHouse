@@ -37,7 +37,10 @@ public class UserService implements UserDetailsService {
     }
 
     public void save(@NotNull User user) {
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        // Kiểm tra nếu mật khẩu chưa được mã hóa
+        if (!user.getPassword().startsWith("$2a$")) { // "$2a$" là tiền tố của mật khẩu mã hóa bằng BCrypt
+            user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
         userRepository.save(user);
     }
 
@@ -104,6 +107,19 @@ public class UserService implements UserDetailsService {
     public void removeFromFavorites(User user, Product product) {
         user.getFavoriteProducts().remove(product);
         userRepository.save(user); // Cập nhật danh sách yêu thích trong cơ sở dữ liệu
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public boolean checkEmailExists(String email) {
+        // Truy vấn cơ sở dữ liệu để kiểm tra email
+        return userRepository.existsByEmail(email);  // Giả sử bạn có một method trong repository
     }
 
 }

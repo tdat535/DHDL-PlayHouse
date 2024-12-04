@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" href="/css/login-register-css.css">
     <script src="/js/password-toggle.js" defer></script>
+    <script src="/js/alert.js" defer></script>
+    <link rel="stylesheet" href="/css/alert.css">
 
 </head>
 <body>
@@ -37,8 +39,8 @@
                                 <h3 class="mb-4 text-center" style="font-weight: bolder;">Sign In</h3>
                             </div>
                         </div>
-                        <form th:action="@{/login}" method="post" class="signin-form">
-                            <div th:if="${param.error}" class="alert alert-danger">Invalid username and password.</div>
+                        <form th:action="@{/login}" method="post" class="login-form" >
+                            <div th:if="${param.error}" class="alert alert-danger">Nhập sai tài khoản hoặc mật khẩu.</div>
                             <div th:if="${param.logout}" class="alert alert-success">You have been logged out.</div>
                             <div class="form-group mb-3 position-relative" >
                                 <input type="text" class="form-control" placeholder=" " id="username" name="username" required >
@@ -62,12 +64,28 @@
                                 </div>
 
                                 <div>
-                                    <a class="link-secondary" href="#">Forgot Password?</a>
+                                    <a class="link-secondary" th:href="${'/authentication/recover'}">Forgot Password?</a>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="container mt-3">
+            <!-- Hiển thị thông báo thành công -->
+            <div th:if="${message}" class="alert alert-success alert-dismissible fade show fixed-alert" role="alert">
+                <i class="bi bi-check-circle"></i>
+                <span th:text="${message}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Hiển thị thông báo lỗi -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fixed-alert" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     </div>

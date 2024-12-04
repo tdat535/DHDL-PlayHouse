@@ -29,3 +29,13 @@ document.getElementById('addToCartButton').addEventListener('click', function(e)
     var productId = document.querySelector('input[name="productId"]').value; // Lấy productId
     window.location.href = "/cart/addToCart?productId=" + productId + "&quantity=" + quantity; // Chuyển hướng với tham số
 });
+
+document.getElementById('addToFavoriteButton').addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default behavior (link action)
+    var quantity = document.getElementById('quantity').value; // Get the quantity value (optional, may not be needed for favorites)
+    var productId = document.querySelector('input[name="productId"]').value; // Get the product ID
+
+    // Redirect to the favorites add endpoint
+    window.location.href = "/homepage/favorite/add?productId=" + productId;
+});
+

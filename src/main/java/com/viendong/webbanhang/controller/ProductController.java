@@ -1,127 +1,123 @@
 package com.viendong.webbanhang.controller;
 
-import com.viendong.webbanhang.model.CartItem;
-import com.viendong.webbanhang.model.Product;
-import com.viendong.webbanhang.model.Reviews;
+import com.viendong.webbanhang.model.*;
 import com.viendong.webbanhang.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+    private final CategoryService categoryService;
+    private final BrandService brandService;
+    private final ReviewService reviewService;
+    private final CartService cartService;
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private BrandService brandService;
-
-    @Autowired
-    private ReviewService reviewService;
-
-    @Autowired
-    private CartService cartService;
-
-    public ProductController(ProductService productService, CategoryService categoryService, ReviewService reviewService ) {
+    public ProductController(ProductService productService, CategoryService categoryService, BrandService brandService, ReviewService reviewService, CartService cartService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.brandService = brandService;
         this.reviewService = reviewService;
-
+        this.cartService = cartService;
     }
-
 
     @GetMapping
-    public String showProducts(Model model,
-                               @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "10") int size,
-                               @RequestParam(value = "keyword", required = false) String keyword,
-                               @RequestParam(value = "categories", required = false) List<String> categories,
-                               @RequestParam(value = "priceRanges", required = false) List<String> priceRanges,
-                               @RequestParam(value = "brands", required = false) List<String> brands) {
-        page = Math.max(0, (page + 1) - 1);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Product> productPage;
+    public String showProducts(@RequestParam(value = "page", defaultValue = "0") int page, Model model) {
+        Pageable pageable = PageRequest.of(page, 5); // Mỗi trang 5 sản phẩm
 
-        if (keyword != null && !keyword.isEmpty()) {
-            productPage = productService.searchProductsByName(keyword, pageable);
-            model.addAttribute("keyword", keyword);
-        } else if ((categories != null && !categories.isEmpty()) || (priceRanges != null && !priceRanges.isEmpty()) || (brands != null && !brands.isEmpty())) {
-            productPage = productService.filterProducts(categories, priceRanges, brands, pageable);
-        } else {
-            productPage = productService.getAllProducts(pageable);
-        }
+        model.addAttribute("product", new Product());
 
-        model.addAttribute("productPage", productPage);
-        model.addAttribute("products", productPage);
-        model.addAttribute("selectedCategories", categories);
-        model.addAttribute("selectedPriceRanges", priceRanges);
-        model.addAttribute("selectedBrands", brands); // Thêm danh sách brands được chọn
-        model.addAttribute("brands", brandService.getAllBrand());// Danh sách tất cả brands
-        long totalProducts = productService.countAllProducts(); // Thêm dòng này
-        model.addAttribute("totalProducts", totalProducts);
+        // Sử dụng phương thức getProducts để lấy tất cả sản phẩm
+        Page<Product> productsPage = productService.getProducts(pageable); // Lấy sản phẩm theo trang
+        model.addAttribute("products", productsPage.getContent()); // Thêm danh sách sản phẩm vào model
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("brands", brandService.getAllBrand());
+        model.addAttribute("totalProducts", productsPage.getTotalElements()); // Tổng số sản phẩm
+        model.addAttribute("currentPage", page); // Lưu lại trang hiện tại
+
         return "/products/products-list";
     }
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
+
+    @GetMapping("/filter")
+    public String filterProducts(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "categories", required = false) List<String> categories,
+            @RequestParam(value = "brands", required = false) List<String> brands,
+            @RequestParam(value = "page", defaultValue = "0") int page, Model model) {
+
+        Pageable pageable = PageRequest.of(page, 5); // Mỗi trang 5 sản phẩm
+
+        Page<Product> filteredProducts;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            filteredProducts = productService.searchProducts(keyword, categories, brands, pageable);
+        } else {
+            filteredProducts = productService.filterProducts(categories, brands, pageable);
+        }
+
         model.addAttribute("product", new Product());
+        model.addAttribute("products", filteredProducts.getContent()); // Thêm danh sách sản phẩm vào model
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("brand", brandService.getAllBrand());
-        return "/products/add-product";
+        model.addAttribute("brands", brandService.getAllBrand());
+        model.addAttribute("totalProducts", filteredProducts.getTotalElements()); // Tổng số sản phẩm
+        model.addAttribute("currentPage", page); // Lưu lại trang hiện tại
+        model.addAttribute("keyword", keyword); // Truyền từ khóa tìm kiếm vào model
+
+        return "/products/products-list";
     }
+
+
     @PostMapping("/add")
-    public String addProduct(@Valid Product product, BindingResult bindingResult, Model model) {
+    public String addProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
-            model.addAttribute("brand", brandService.getAllBrand());
-            return "/products/add-product";
+            model.addAttribute("brands", brandService.getAllBrand());
+            return "/products/products-list";
         }
+
         try {
-            productService.addProduct(product);
+            product.setRating(null); // Ensure rating is null if not provided
+            productService.addProduct(product, redirectAttributes); // Save the product
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("categories", categoryService.getAllCategories());
-            model.addAttribute("brand", brandService.getAllBrand());
-            return "/products/add-product";
+            model.addAttribute("brands", brandService.getAllBrand());
+            return "/products/products-list";
         }
-        return "redirect:/products";
-    }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model) {
-        Product product = productService.getProductById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("brand", brandService.getAllBrand());
-        return "/products/edit-product"; // This should point to the edit product view
+        return "redirect:/products"; // Redirect after successfully adding the product
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") Long id, @Valid Product product, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("categories", categoryService.getAllCategories());
-            model.addAttribute("brand", brandService.getAllBrand());
-            return "/products/edit-product"; // Redirect back to the edit page if there are errors
-        }
+    public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
+        Category category = categoryService.getCategoryById(product.getCategory().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        Brand brand = brandService.getBrandById(product.getBrand().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
 
-        // Ensure the ID of the product being updated matches the path variable
-        product.setId(id);
-        productService.updateProduct(product); // Save the updated product
+        product.setCategory(category);
+        product.setBrand(brand);
+
+        productService.updateProduct(id, product);
         return "redirect:/products";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProductById(id);

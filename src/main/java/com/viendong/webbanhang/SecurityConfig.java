@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +38,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:3000");  // Allow frontend origin
+            }
+        };
+    }
+
+
+    @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         var auth = new DaoAuthenticationProvider();
         auth.setUserDetailsService(userDetailsService());
@@ -46,9 +59,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**")
+                        .permitAll()
+                        .requestMatchers("/authentication/recover")  // Add this line
                         .permitAll()
                         .requestMatchers("/products/add", "/dashboard/**", "/categories/add", "/brand/add")
                         .hasAnyAuthority("ADMIN")
@@ -68,7 +83,7 @@ public class SecurityConfig {
                         .loginPage("/authentication/login")
                         .loginProcessingUrl("/login")
                         .successHandler(successHandler)
-                        .failureUrl("/login?error")
+                        .failureUrl("/authentication/login?error") // Cập nhật URL lỗi cho đúng trang tùy chỉnh
                         .permitAll()
                 )
                 .rememberMe(rememberMe -> rememberMe

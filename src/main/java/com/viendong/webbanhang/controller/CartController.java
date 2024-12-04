@@ -28,34 +28,34 @@ public class CartController {
     @Autowired
     private BrandService brandService;
 
-    @GetMapping
-    public String showCart(Model model) {
-        List<CartItem> cartItems = cartService.getCartItems();
-        model.addAttribute("cartItems", cartItems);
-
-        // Tính tổng số lượng các sản phẩm trong giỏ hàng
-        int totalItems = (int) cartItems.stream().count();
-
-        // Thêm tổng số lượng vào mô hình
-        model.addAttribute("totalItems", totalItems);
-        // Tổng giá trị sản phẩm
-        double totalProduct = cartService.calculateTotalProduct();
-
-        // Tổng giá trị sản phẩm cộng phí vận chuyển
-        double total = cartService.calculateTotal();
-        double shippingFee = cartService.getShippingFee(); // Lấy phí vận chuyển hiện tại
-
-        model.addAttribute("totalProduct", totalProduct); // Tổng tiền sản phẩm
-        model.addAttribute("total", total); // Tổng tiền bao gồm phí vận chuyển
-        model.addAttribute("shippingFee", shippingFee); // Phí vận chuyển
-
-        // Các thông tin khác
-        model.addAttribute("products", productService.getAllProducts());
-        model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("brands", brandService.getAllBrand());
-
-        return "/cart/cart";
-    }
+//    @GetMapping
+//    public String showCart(Model model) {
+//        List<CartItem> cartItems = cartService.getCartItems();
+//        model.addAttribute("cartItems", cartItems);
+//
+//        // Tính tổng số lượng các sản phẩm trong giỏ hàng
+//        int totalItems = (int) cartItems.stream().count();
+//
+//        // Thêm tổng số lượng vào mô hình
+//        model.addAttribute("totalItems", totalItems);
+//        // Tổng giá trị sản phẩm
+//        double totalProduct = cartService.calculateTotalProduct();
+//
+//        // Tổng giá trị sản phẩm cộng phí vận chuyển
+//        double total = cartService.calculateTotal();
+//        double shippingFee = cartService.getShippingFee(); // Lấy phí vận chuyển hiện tại
+//
+//        model.addAttribute("totalProduct", totalProduct); // Tổng tiền sản phẩm
+//        model.addAttribute("total", total); // Tổng tiền bao gồm phí vận chuyển
+//        model.addAttribute("shippingFee", shippingFee); // Phí vận chuyển
+//
+//        // Các thông tin khác
+//        model.addAttribute("products", productService.getAllProducts());
+//        model.addAttribute("categories", categoryService.getAllCategories());
+//        model.addAttribute("brands", brandService.getAllBrand());
+//
+//        return "/cart/cart";
+//    }
 
 
     // Controller method for Buy Now
@@ -63,7 +63,7 @@ public class CartController {
     @PostMapping("/add")
     public String buyNow(@RequestParam Long productId, @RequestParam int quantity) {
         cartService.addToCart(productId, quantity);  // Add product to cart
-        return "redirect:/cart";  // Redirect to the cart page
+        return "redirect:/order/cart";  // Redirect to the cart page
     }
 
     // Controller method for Add to Cart (GET)
@@ -83,26 +83,26 @@ public class CartController {
     @GetMapping("/remove/{productId}")
     public String removeFromCart(@PathVariable Long productId){
         cartService.removeFromCart(productId);
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
     @GetMapping("/clear")
     public String clearCart() {
         cartService.clearCart();
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
 
     // Tăng số lượng sản phẩm
     @GetMapping("/increaseQuantity/{productId}")
     public String increaseQuantity(@PathVariable Long productId) {
         cartService.increaseQuantity(productId);
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
 
     // Giảm số lượng sản phẩm
     @GetMapping("/decreaseQuantity/{productId}")
     public String decreaseQuantity(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
         cartService.decreaseQuantity(productId, redirectAttributes);
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
 
     @PostMapping("/updateQuantity/{productId}")
@@ -111,7 +111,7 @@ public class CartController {
             // Nếu quantity < 1, xóa sản phẩm khỏi giỏ hàng và quay lại trang giỏ hàng
             cartService.removeFromCart(productId);
             redirectAttributes.addFlashAttribute("message", "Sản phẩm đã bị xóa khỏi giỏ hàng.");
-            return "redirect:/cart";
+            return "redirect:/order/cart";
         }
 
         // Kiểm tra sự tồn tại của sản phẩm
@@ -130,7 +130,7 @@ public class CartController {
         }
 
         // Quay lại trang giỏ hàng sau khi cập nhật
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
 
 
@@ -139,7 +139,7 @@ public class CartController {
     public String updateShipping(@RequestParam("shippingOption") double shippingFee, RedirectAttributes redirectAttributes) {
         cartService.setShippingFee(shippingFee);
         redirectAttributes.addFlashAttribute("message", "Shipping option updated!");
-        return "redirect:/cart";
+        return "redirect:/order/cart";
     }
 
 

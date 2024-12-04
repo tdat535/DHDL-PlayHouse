@@ -24,49 +24,33 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String image;
 
     @Column(nullable = false)
     private double price;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private int quantity;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public void setBrand(Brand brand) {
-        this.brand = brand;
-    }
-
-    // Mô tả sản phẩma
+    @Column(nullable = true, length = 500)  // Cập nhật chiều dài của description
     private String description;
+
+    // Liên kết với bảng category
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
+
+    @ManyToMany(mappedBy = "favoriteProducts")
+    private Set<User> favoritedByUsers = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "rating_id", nullable = true) // Allow nullable ratings
+    private Reviews rating;
 
     public Long getId() {
         return id;
@@ -100,16 +84,51 @@ public class Product {
         return brand;
     }
 
-    // Liên kết với bảng category
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    public Set<User> getFavoritedByUsers() {
+        return favoritedByUsers;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "brand_id", nullable = false)
-    private Brand brand;
+    public Reviews getRating() {
+        return rating;
+    }
 
-    @ManyToMany(mappedBy = "favoriteProducts")
-    private Set<User> favoritedByUsers = new HashSet<>();
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public void setFavoritedByUsers(Set<User> favoritedByUsers) {
+        this.favoritedByUsers = favoritedByUsers;
+    }
+
+    public void setRating(Reviews rating) {
+        this.rating = rating;
+    }
 }

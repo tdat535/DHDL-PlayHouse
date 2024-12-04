@@ -60,6 +60,7 @@
     <script src="/js/selectedFee.js" defer></script>
     <script src="/js/alert.js" defer></script>
     <link rel="stylesheet" href="/css/alert.css">
+
 </head>
 <body style=" color:#462424;font-family:'Nunito Sans';">
 <section layout:fragment="content" class="container mt-3">
@@ -154,9 +155,7 @@
                         <span th:text="${shippingFee} + 'đ'"></span>
                     </div>
                     <div class="d-grid mt-5">
-                        <button class="btn btn-secondary btn-lg" type="button">
-                            <a th:href="@{/order/checkout}" class="btn btn-primary">Check Out</a>
-                        </button>
+                        <a th:href="@{/order/checkout}" class="btn btn-secondary btn-lg">Check Out</a>
                     </div>
                 </div>
             </ul>
@@ -164,7 +163,21 @@
             <!--      <a th:href="@{/order/checkout}" class="btn btn-primary">Check Out</a>-->
         </div>
     </div>
+    <div class="container mt-3">
+        <!-- Hiển thị thông báo thành công -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 </section>
 </body>
 </html>

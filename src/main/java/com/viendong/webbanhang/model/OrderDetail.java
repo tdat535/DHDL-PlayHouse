@@ -1,4 +1,5 @@
 package com.viendong.webbanhang.model;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,38 +19,34 @@ public class OrderDetail {
 
     private int quantity;
 
-    private double price;
+    private double unitPrice; // Giá đơn vị sản phẩm
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    /**
+     * Tính tổng giá trị của một mục trong đơn hàng.
+     * @return Tổng giá trị (quantity * unitPrice)
+     */
+    public double getTotalPrice() {
+        return quantity * unitPrice;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public double getPrice() {
-        return price;
+    public double getUnitPrice() {
+        return unitPrice;
     }
 
     public Product getProduct() {
@@ -60,15 +57,23 @@ public class OrderDetail {
         return order;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-    public double getTotalPrice() {
-        return quantity * price;
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

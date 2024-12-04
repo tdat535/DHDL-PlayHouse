@@ -1,4 +1,5 @@
 package com.viendong.webbanhang.service;
+
 import com.viendong.webbanhang.model.OrderDetail;
 import com.viendong.webbanhang.model.Product;
 import com.viendong.webbanhang.model.User;
@@ -7,30 +8,51 @@ import com.viendong.webbanhang.repository.ProductRepository;
 import com.viendong.webbanhang.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.viendong.webbanhang.ProductNotFoundException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-//@RequiredArgsConstructor
 @Transactional
-
 public class ProductService {
 
-    private  ProductRepository productRepository;
-    private final UserRepository userRepository; // Add UserRepository
-
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
     private final OrderDetailRepository orderDetailRepository;
 
-
-    public ProductService (ProductRepository productRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository) {
+    public ProductService(ProductRepository productRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userRepository = userRepository;
+    }
+
+
+    public Optional<Product> findById(Long productId) {
+        return productRepository.findById(productId);
+    }
+
+    public void save(Product product) {
+        productRepository.save(product);
+    }
+
+    // Lấy sản phẩm với phân trang
+    public Page<Product> getProducts(Pageable pageable) {
+        return productRepository.findAll(pageable); // Find all products with pagination
+    }
+
+    public Page<Product> searchProducts(String keyword, List<String> categories, List<String> brands, Pageable pageable) {
+        return productRepository.findByKeywordAndFilters(keyword, categories, brands, pageable);
+    }
+
+    public Page<Product> filterProducts(List<String> categories, List<String> brands, Pageable pageable) {
+        return productRepository.findByFilters(categories, brands, pageable);
     }
 
     public List<Product> getProductsByCategory(Long categoryId) {
@@ -51,57 +73,43 @@ public class ProductService {
         return productRepository.count();
     }
 
-    public Page<Product> searchProductsByName(String keyword, Pageable pageable) {
-        return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
-    }
-    // Phân trang sản phẩm
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
-    }
-    public Page<Product> filterProducts(List<String> categories, List<String> priceRanges, List<String> brands, Pageable pageable) {
-        return productRepository.findByCategoryAndPriceRangeAndBrand(categories, priceRanges, brands, pageable);
-    }
-    // Retrieve all products from the database
+    // Get all products without pagination
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
-    // Retrieve a product by its id
+
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
-    // Add a new product to the database
-    public Product addProduct(Product product) {
+
+    public Product addProduct(Product product, RedirectAttributes redirectAttributes) {
         if (productRepository.existsByName(product.getName())) {
-            throw new IllegalStateException("Product with name '" + product.getName() + "' already exists.");
+            redirectAttributes.addFlashAttribute("error",
+                    "Sản phẩm '" + product.getName() + "' đã tồn tại.");
         }
         return productRepository.save(product);
     }
-    // Update an existing product
-    public Product updateProduct(@NonNull Product product) {
-        Product existingProduct = productRepository.findById(product.getId()) .orElseThrow(() -> new IllegalStateException("Product with ID " + product.getId() + " does not exist."));
+
+    public void updateProduct(Long id, Product product) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
         existingProduct.setName(product.getName());
-        existingProduct.setImage(product.getImage());
         existingProduct.setPrice(product.getPrice());
         existingProduct.setQuantity(product.getQuantity());
-        existingProduct.setDescription(product.getDescription());
         existingProduct.setCategory(product.getCategory());
         existingProduct.setBrand(product.getBrand());
-        return productRepository.save(existingProduct);
+        existingProduct.setImage(product.getImage());
+        existingProduct.setDescription(product.getDescription());
+
+        productRepository.save(existingProduct); // Save the updated product
     }
-    // Delete a product by its id
+
     public void deleteProductById(Long id) {
-        if(!productRepository.existsById(id)){
+        if (!productRepository.existsById(id)) {
             throw new IllegalStateException("Product with ID " + id + " does not exist.");
         }
         productRepository.deleteById(id);
-    }
-    Page<Product> getAll(Integer pageNo) {
-        Pageable pageable = PageRequest.of(pageNo -1,2);
-        return this.productRepository.findAll(pageable);
-    }
-
-    public OrderDetailRepository getOrderDetailRepository() {
-        return orderDetailRepository;
     }
 
     public double calculateTotalRevenue() {
@@ -109,17 +117,48 @@ public class ProductService {
                 .mapToDouble(product -> product.getPrice() * product.getQuantity())
                 .sum();
     }
+
     public long countAllProducts() {
-        return productRepository.count(); // Sử dụng phương thức count() đã có trong JpaRepository
+        return productRepository.count();
     }
 
     public long countFavoriteProducts(Long userId) {
-        // Find the user by ID
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            // Assuming the user has a 'favoriteProducts' set containing all their favorite products
             return user.get().getFavoriteProducts().size();
         }
         return 0;
+    }
+
+    public boolean hasEnoughQuantity(Long productId, int quantity) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            int availableQuantity = productOpt.get().getQuantity();
+            return availableQuantity >= quantity; // Kiểm tra có đủ số lượng không
+        }
+        return false; // Sản phẩm không tồn tại
+    }
+
+    public boolean isQuantityTooLow(Long productId, int minimumQuantity) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            int availableQuantity = productOpt.get().getQuantity();
+            return availableQuantity <= minimumQuantity; // Kiểm tra nếu số lượng còn lại <= mức tối thiểu
+        }
+        return true; // Nếu sản phẩm không tồn tại, xem như không đủ
+    }
+
+    public void reduceQuantity(Long productId, int quantity) {
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new IllegalArgumentException("Product not found"));
+        if (product.getQuantity() < quantity) {
+            throw new IllegalStateException("Not enough quantity for product: " + product.getName());
+        }
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
+    }
+
+    public List<Product> searchProducts(String query) {
+        return productRepository.findByNameContainingIgnoreCase(query);
     }
 }

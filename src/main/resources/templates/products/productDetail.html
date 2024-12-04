@@ -80,27 +80,29 @@
                     <input type="number" class="form-control w-25" name="quantity" id="quantity" value="1" min="1">
                 </div>
 
-                <!-- Buy Now Button -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <button type="submit" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #C96868; color: white">
-                        <i class="bi bi-bag-fill me-2"></i>
-                        <span>Buy Now</span>
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="d-flex flex-row gap-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button type="submit" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #C96868; color: white">
+                                <i class="bi bi-bag-fill me-2"></i>
+                                <span>Buy Now</span>
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button id="addToCartButton" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #007bff; color: white">
+                                <i class="bi bi-cart-check me-2"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="addToFavoriteButton" type="button" class="btn btn-outline-danger" style="font-size: 1rem">
+                        <i class="bi bi-heart-fill"></i>
                     </button>
                 </div>
-
-                <a href="#" id="addToCartButton" class="btn btn-lg d-flex align-items-center gap-2" style="background-color: #007bff; color: white">
-                    <i class="bi bi-cart-check me-2"></i>
-                    <span>Add to Cart</span>
-                </a>
             </form>
 
-            <!-- Add to Cart Button (GET request) -->
 
-
-            <!-- Favorite Button -->
-            <button type="button" class="btn btn-outline-danger">
-                <i class="bi bi-heart-fill"></i>
-            </button>
 
         </div>
     </div>

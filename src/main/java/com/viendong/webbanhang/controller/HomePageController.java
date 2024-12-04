@@ -5,11 +5,11 @@ import com.viendong.webbanhang.model.Product;
 import com.viendong.webbanhang.model.User;
 import com.viendong.webbanhang.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -100,6 +100,27 @@ public class HomePageController {
         return "homepages/filter-page";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam("query") String query, Model model) {
+        // Get all products matching the search query
+        List<Product> products = productService.searchProducts(query);
+
+        // Add categories, brands, and other data to the model for rendering
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("brands", brandService.getAllBrand());
+        model.addAttribute("productCount", products.size());
+
+        // Get the cart items and calculate the total number of items in the cart
+        List<CartItem> cartItems = cartService.getCartItems();
+        int totalItems = (int) cartItems.stream().count();
+        model.addAttribute("totalItems", totalItems);
+
+        // Return the view name for displaying search results
+        return "homepages/filter-page";
+    }
+
+
     @GetMapping("/favorite")
     public String showFavoritePage(Model model) {
         // Get the currently logged-in user
@@ -180,5 +201,63 @@ public class HomePageController {
         // Điều hướng lại danh sách yêu thích
         return "redirect:/homepage/favorite";
     }
+
+    @GetMapping("/user-information")
+    public String showInformationPage(Model model) {
+        User currentUser = userService.getCurrentUser();
+
+        model.addAttribute("user", currentUser);
+
+        return "homepages/user-information";
+    }
+
+    @GetMapping("/edit-profile")
+    public String showEditProfilePage(Model model) {
+        // Get the currently logged-in user
+        User currentUser = userService.getCurrentUser();
+
+        // Add the current user information to the model for editing
+        model.addAttribute("user", currentUser);
+
+        // Return the view for the profile edit page
+        return "homepages/edit-profile";
+    }
+
+    @PostMapping("/edit-profile")
+    public String updateProfile(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes) {
+        // Lấy người dùng hiện tại từ session
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> existingUserOptional = userService.findByUsername(username);
+
+        // Kiểm tra người dùng có tồn tại không
+        if (existingUserOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+            return "redirect:/homepage/edit-profile";
+        }
+
+        // Lấy đối tượng User hiện tại từ cơ sở dữ liệu
+        User existingUser = existingUserOptional.get();
+
+        // Kiểm tra và chỉ cập nhật mật khẩu khi có mật khẩu mới
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
+
+        // Cập nhật các trường khác từ form
+        existingUser.setRealName(user.getRealName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setAddress(user.getAddress());
+        // Thêm các trường khác nếu cần
+
+        // Lưu người dùng đã cập nhật
+        userService.save(existingUser);
+
+        // Thêm thông báo thành công và chuyển hướng
+        redirectAttributes.addFlashAttribute("success", "Profile updated successfully.");
+        return "redirect:/homepage/user-information";
+    }
+
+
 
 }

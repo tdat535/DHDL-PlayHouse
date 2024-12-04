@@ -1,6 +1,7 @@
 package com.viendong.webbanhang.controller;
 
 import com.viendong.webbanhang.model.Brand;
+import com.viendong.webbanhang.model.Category;
 import com.viendong.webbanhang.service.BrandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +16,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class BrandController {
     @Autowired
     private BrandService brandService;
 
-    @GetMapping("/brand/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("brand", new Brand());
-        return "/brand/add-brand";
-    }
 
     @PostMapping("/brand/add")
     public String addBrand(@Valid Brand brand, BindingResult bindingResult, Model model) {
@@ -41,26 +41,32 @@ public class BrandController {
     }
 
     @GetMapping("/brand")
-    public String listBrand(Model model,
-                            @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "7") int size,
-                            @RequestParam(value = "keyword", required = false) String keyword) {
-        page = Math.max(0, page);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Brand> brandPage;
+    public String listBrand(Model model, @RequestParam(value = "id", required = false) Long id) {
+        model.addAttribute("brand", new Brand());
 
-        if (keyword != null && !keyword.isEmpty()) {
-            brandPage = brandService.searchBrandByName(keyword, pageable);
-            model.addAttribute("keyword", keyword);
-        } else {
-            brandPage = brandService.getAllProducts(pageable);
+        // Lấy danh sách tất cả các thương hiệu
+        List<Brand> brands = brandService.getAllBrand();
+        model.addAttribute("brands", brands);
+
+        // Số lượng thương hiệu
+        long BrandCount = brandService.count();
+        model.addAttribute("BrandCount", BrandCount);
+
+        // Xử lý nếu ID được truyền
+        if (id != null) {
+            Optional<Brand> brandOptional = brandService.getBrandById(id);
+            if (brandOptional.isPresent()) {
+                Brand brand = brandOptional.get();
+                model.addAttribute("brand", brand);
+                model.addAttribute("products", brand.getProducts()); // Giả sử Brand có quan hệ với Product
+            } else {
+                throw new IllegalStateException("Brand with ID " + id + " not found.");
+            }
         }
 
-        long brandCount = brandService.count();
-        model.addAttribute("brandCount", brandCount);
-        model.addAttribute("brandPage", brandPage);
         return "/brand/brand-list";
     }
+
 
     @GetMapping("/brand/edit/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {

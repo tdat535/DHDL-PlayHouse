@@ -58,7 +58,7 @@ public class OrderService {
             detail.setOrder(order); // Set the saved Order
             detail.setProduct(cartItem.getProduct());
             detail.setQuantity(cartItem.getQuantity());
-            detail.setPrice(total);  // Set price for the product in the order detail
+            detail.setUnitPrice(productPrice); // Gán giá đơn vị của sản phẩm
 
             // Tính tổng tiền sản phẩm
 
@@ -86,8 +86,8 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
+    public long countOrder() {
+        return orderRepository.count();
     }
 
     public void deleteOrder(Long id){
