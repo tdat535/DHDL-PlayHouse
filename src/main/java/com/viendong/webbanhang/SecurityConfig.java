@@ -42,10 +42,14 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000");  // Allow frontend origin
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000", "https://java-dhdl-playhouse.onrender.com")  // Allow both local and production origins
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*");
             }
         };
     }
+
 
 
     @Bean
