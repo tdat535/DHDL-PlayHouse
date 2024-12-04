@@ -1,0 +1,98 @@
+body {
+    background-color: #FAF0F0;
+    font-family: 'Nunito Sans', sans-serif;
+}
+.heading-section {
+    font-style: italic;
+    font-size: 48px;
+    color: #462424;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.floating-label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #9a9c9a;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+.checkbox-wrap input[type="checkbox"] {
+    accent-color: #C96868;
+}
+
+.form-control {
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.form-control:focus + .floating-label,
+.form-control:not(:placeholder-shown) + .floating-label {
+    top: 0;
+    margin-bottom: 12px;
+    transform: translateY(-100%);
+    font-size: 14px;
+    color: #C96868;
+}
+
+.form-control::placeholder {
+    color: transparent;
+}
+
+.btn.submit {
+    border-radius: 50px;
+    background-color: #C96868;
+    color: #FAF0F0;
+    font-weight: bold;
+}
+
+.btn.submit:hover {
+    background-color: #A05050;
+}
+
+.link-secondary {
+    text-decoration: none;
+    color: #C96868;
+}
+
+.link-secondary:hover {
+    text-decoration: underline;
+}
+
+.password-toggle, .btn-sendEmail {
+    cursor: pointer;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#resendTimer {
+    position: absolute;      /* Đặt vị trí tuyệt đối */
+    top: 100%;               /* Đặt nó ngay dưới input email */
+    right: 0;                /* Căn chỉnh với vị trí của icon */
+    font-weight: 600;
+    color: lightgrey;
+    font-size: 14px;
+    margin-top: 5px;         /* Khoảng cách giữa timer và icon */
+    display: none;           /* Ẩn khi chưa bắt đầu đếm ngược */
+}
+
+.btn-sendEmail.disabled {
+    pointer-events: none;  /* Ngừng nhận sự kiện */
+    opacity: 0.5;  /* Giảm độ sáng để biểu thị trạng thái disabled */
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}

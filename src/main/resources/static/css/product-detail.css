@@ -1,0 +1,113 @@
+.large-img {
+    max-width: 100%; /* đảm bảo hình không rộng hơn container */
+    width: auto; /* giúp hình giữ đúng tỷ lệ */
+    height: auto; /* đảm bảo hình giữ đúng tỷ lệ */
+    display: block; /* loại bỏ khoảng trắng xung quanh ảnh */
+    margin: 0 auto; /* cân chỉnh hình vào trung tâm */
+}
+
+.large-img-container {
+    max-width: 40%;
+    height: auto; /* Always maintain aspect ratio */
+}
+
+.large-img {
+    width: 100%; /* or a fixed width like 300px, depending on your layout */
+    max-width: 500px; /* Maximum width you want the image to take */
+    height: auto; /* maintain aspect ratio */
+    object-fit: contain; /* ensure the aspect ratio is maintained */
+    display: block;
+    margin: 0 auto;
+}
+.image-container {
+    overflow: hidden; /* Ẩn phần dư khi ảnh zoom */
+}
+
+.zoom-img {
+    transition: transform 0.5s ease; /* Thời gian chuyển đổi của hiệu ứng */
+}
+
+.zoom-img:hover {
+    transform: scale(1.1); /* Tỷ lệ phóng to khi hover */
+}
+
+.btn-submit:hover{
+    background-color: #974E4E;
+}
+
+.review-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.review-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #C96868;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #C96868;
+    box-shadow: 0 0 4px rgba(201, 104, 104, 0.5);
+}
+.btn-submit {
+    width: 100%;
+    background-color: #C96868;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 50px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #A85050;
+}
+
+.rating-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-container i {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
+    color: lightgray;
+}
+
+.rating-container i:hover {
+    transform: scale(1.2);
+    color: #F5A623;
+}
+
+.rating-container i.active {
+    color: #F5A623;
+    transform: scale(1.2);
+}
+
+.accordion-item, .accordion-button{
+    background-color: #f9f9f9;
+}

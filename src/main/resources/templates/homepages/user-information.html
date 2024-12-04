@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout-user}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <link rel="stylesheet" href="path/to/bootstrap.css"> <!-- Thêm đường dẫn tới Bootstrap nếu cần -->
+</head>
+<body>
+<section layout:fragment="content" class="container-fluid p-0">
+    <div class="container mt-5">
+        <h2>User Information</h2>
+
+        <!-- Hiển thị thông tin người dùng -->
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" th:value="${user.username}" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label for="realName" class="form-label">Real Name</label>
+            <input type="text" class="form-control" id="realName" th:value="${user.realName}" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" th:value="${user.email}" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" th:value="${user.phone}" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" th:value="${user.address}" disabled>
+        </div>
+
+        <!-- Thêm các nút khác nếu cần, ví dụ: chỉnh sửa thông tin -->
+        <a href="/homepage/edit-profile" class="btn btn-primary">Edit Profile</a>
+    </div>
+</section>
+</body>
+</html>

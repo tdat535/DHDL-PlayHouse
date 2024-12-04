@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout-user}">
+<head>
+  <meta charset="UTF-8">
+  <title>DHDL</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+<!--  <link rel="stylesheet" href="/css/category.css">-->
+</head>
+<body  style="background-color:#FFF4EA; color:#462424;font-family:'Nunito Sans';">
+  <section layout:fragment="content" class="container-fluid p-0">
+    <div class="mt-3">
+      <div class="d-flex container">
+        <div class="sidebar w-25 p-0" style="height: 100vh; position: relative;">
+          <nav aria-label="breadcrumb" class="container p-0" style="--bs-breadcrumb-divider: '>';">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Board Games</li>
+            </ol>
+          </nav>
+          <div class="shadow card position-sticky" style="top: 20px; height: 100%;">
+            <div class="card-header">
+              <h5 class="card-title">Filter Toys</h5>
+            </div>
+            <div class="card-body">
+              <!-- Filter content here -->
+              <div class="filterItem"></div>
+              <h5>Price</h5>
+              <div class="filterItem" style="font-size:14px;">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="price0-200" data-filter="0 - 200.000₫">
+                  <label class="form-check-label" for="price0-200">0-200.000₫</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="price200-500" data-filter="200.000₫ - 500.000₫">
+                  <label class="form-check-label" for="price200-500">200.000₫ - 500.000₫</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="price500plus" data-filter="500.000₫ +">
+                  <label class="form-check-label" for="price500plus">500.000₫ +</label>
+                </div>
+              </div>
+              <hr style="color:#BCA779; height:2px;">
+              <h5>Age</h5>
+              <div class="filterItem" style="font-size:14px;">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="age0-1" data-filter="age 1+">
+                  <label class="form-check-label" for="age0-1">0-1 year</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="age1-2" data-filter="age 4+">
+                  <label class="form-check-label" for="age1-2">1-2 years</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="age2plus" data-filter="age 6+">
+                  <label class="form-check-label" for="age2plus">2+ years</label>
+                </div>
+              </div>
+              <hr style="color:#BCA779; height:2px;">
+              <h5>Availability</h5>
+              <div class="filterItem" style="font-size:14px;">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="new" data-filter="New">
+                  <label class="form-check-label" for="new">New</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="in-stock" data-filter="in-stock">
+                  <label class="form-check-label" for="in-stock">In Stock</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="product-list container ms-5">
+          <div class="mb-3">
+            <h3>Board Games</h3>
+            <div class="container d-flex justify-content-between py-2 px-4" style="background-color:#C96868; color: #FAF0F0; border-radius:99px">
+              <span>Showing <span th:text="${productCount}">0</span> products</span>
+              <div class="d-flex">
+                <span class="me-2">Sort By:</span>
+                <div class="dropdown">
+                  <a class="dropdown-toggle link-offset-2 link-underline link-underline-opacity-0 link-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    Newest
+                  </a>
+
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="product : ${products}">
+              <div class="shadow card" style="width: 100%; height: 25rem; position: relative; overflow: hidden;">
+                <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
+                  <img th:src="${product.image}" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div class="card-body px-3 py-3 product-body" style="height: 150px; overflow: hidden;">
+                  <div>
+                    <span style="font-size: 12px;">
+                        <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                    </span>
+                    <span style="font-size: 12px;">
+                        <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
+                    </span>
+                  </div>
+                  <p class="card-text m-0" th:text="${product.name}">Super Mario World™: Mario & Yoshi</p>
+                  <h4 class="card-title mb-2" style="font-weight: bold;" th:text="${product.price}">200.000d</h4>
+                  <div class="d-flex justify-content-between">
+                    <form th:action="@{/cart/add}" method="post">
+                      <input type="hidden" name="productId" th:value="${product.id}" />
+                      <input type="hidden" name="quantity" value="1" />
+                      <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-bag-fill"></i>
+                        Add to Bag
+                      </button>
+                    </form>
+                    <a th:href="@{/homepage/favorite/add(productId=${product.id})}" style="text-decoration: none; color: inherit">
+                      <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en"
+      layout:decorate="~{layout}">
+<head>
+  <title th:text="${title} ?: 'Dashboard List'">Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    i{
+
+    }
+    .rounded-icon {
+    padding:5px 10px;
+    color: #3498db;
+    margin-right:0;
+    background-color:#fff;
+    border: 1px solid #fff;
+    border-radius: 50%;
+}
+    .card-title, card-text {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body style="background-color:#FFF4EA";>
+<section layout:fragment="content">
+  <div>
+    <div class="container-fluid shadow-sm rounded" style="background-color: #fff;border-radius: 10px;padding:20px;">
+      <div >
+        <div style="background-color: #fff;padding:10px 20px; border-radius: 10px"class="shadow-sm  rounded">
+          <h4 style="margin-bottom:0">Dashboard</h4>
+          <p style="margin-bottom:0">Detail of dashboard</p>
+        </div>
+      </div>
+<!--      <div>-->
+<!--        <p style="margin-bottom:0;padding-bottom:15px; border-bottom: 1px solid ;font-weight:bold">Overview</p>-->
+<!--      </div>-->
+      <div class="d-flex justify-content-between shadow-sm rounded"style="margin-top:20px;padding:15px">
+        <div class="card"style="width:200px;background-color:#198754;margin-top:15px">
+          <div class="card-body">
+            <h6 class="card-title">Revenue ($)</h6>
+            <p class="card-text align-items-center"style="display:flex ; justify-content: space-between;">
+               <strong style="font-size:20px;color:#fff" th:text="${totalRevenue}+ '$'"></strong><i class="bi bi-currency-dollar fs-3 rounded-icon "style="color:#198754;"></i>
+            </p>
+          </div>
+        </div>
+        <a th:href="@{/products}" style="text-decoration: none">
+          <div class="card"style="width:200px;background-color:#0D6EFD;margin-top:15px">
+            <div class="card-body">
+              <h6 class="card-title">Total Items</h6>
+              <p class="card-text"style="display:flex ; justify-content: space-between;">
+                <strong class="align-middle" style="font-size:36px;color:#fff" th:text="${productCount}"></strong><i class="bi bi-box2-fill fs-3 rounded-icon "></i>
+              </p>
+            </div>
+          </div>
+        </a>
+        <div class="card"style="width:200px;background-color:#32ADE6;margin-top:15px" >
+          <div class="card-body">
+            <h6 class="card-title">Total Products Sold</h6>
+            <p class="card-text"style="display:flex ; justify-content: space-between;">
+              <strong class="align-middle" style="font-size:36px;color:#fff" th:text="${totalQuantity}"></strong><i class="bi bi-gift-fill fs-3 rounded-icon "style="color:#0dcaf0;"></i>
+            </p>
+          </div>
+        </div>
+        <a th:href="@{/templates/order}" style="text-decoration: none">
+          <div class="card"style="width:200px;background-color:#0D6EFD;margin-top:15px">
+            <div class="card-body">
+              <h6 class="card-title">Total Orders</h6>
+              <p class="card-text"style="display:flex ; justify-content: space-between;">
+                <strong class="align-middle" style="font-size:36px;color:#fff" th:text="${ordercount}"></strong><i class="bi bi-box2-fill fs-3 rounded-icon "></i>
+              </p>
+            </div>
+          </div>
+        </a>
+        <a th:href="@{/admin/users}" style="text-decoration: none">
+          <div class="card"style="width:200px;background-color:#FFC107;margin-top:15px">
+            <div class="card-body">
+              <h6 class="card-title">Total Users</h6>
+              <p class="card-text align-items-center"style="display:flex ; justify-content: space-between;">
+                <strong style="font-size:36px;color:#fff" th:text="${userCount}"></strong><i class="bi bi-person-circle fs-3 rounded-icon "style="color:#ffc107;"></i>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

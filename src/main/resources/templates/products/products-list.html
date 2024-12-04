@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
+      layout:decorate="~{layout}" lang="en">
+<head>
+    <title th:text="${title} ?: 'Products List'">Product</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+          rel="stylesheet">
+    <script src="/js/modal-product-list.js" defer></script>
+    <script src="/js/alert.js" defer></script>
+    <link rel="stylesheet" href="/css/alert.css">
+    <style>
+        .pagination {
+            margin: 0;
+        }
+
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .page-link {
+            cursor: pointer;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        /* Chỉ định cho biểu tượng trong nút */
+        .btn i {
+            font-size: 1.5rem; /* Tăng kích thước biểu tượng */
+            color: #333; /* Màu mặc định của biểu tượng */
+            border: 2px solid transparent; /* Không có viền ban đầu */
+            padding: 5px; /* Khoảng cách bên trong */
+            transition: all 0.3s ease; /* Hiệu ứng chuyển đổi */
+        }
+
+        /* Hiệu ứng khi hover */
+        .btn .btn-text {
+            display: inline-block;
+            margin-left: 8px;
+            opacity: 0; /* Chữ ban đầu ẩn */
+            transition: opacity 0.3s ease; /* Hiệu ứng mờ dần */
+            font-size: 14px; /* Cỡ chữ */
+        }
+        /* Khi hover vào nút, chữ sẽ xuất hiện */
+        .btn:hover .btn-text {
+            opacity: 1; /* Hiển thị chữ khi hover */
+        }
+
+        /* Cải thiện giao diện khi hover */
+        .btn:hover .bi-eye-fill {
+            color: #007bff;
+        }
+
+        .btn:hover .bi-trash-fill {
+            color: red;
+        }
+
+        .btn:hover .bi-pencil-fill {
+            color: green;
+        }
+    </style>
+
+    <link rel="stylesheet" href="/css/css-modal.css">
+</head>
+<body style="background-color:#FFF4EA;">
+<section layout:fragment="content">
+    <div class="container-fluid shadow-sm rounded" style="padding:15px;background-color: #fff">
+        <div class="d-flex justify-content-between shadow-sm rounded" style="background-color: #fff;padding:10px">
+            <div>
+                <h4 style="margin-bottom:0">Products</h4>
+                <p style="margin-bottom:0">Detail of products</p>
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                Add Product
+            </button>
+        </div>
+
+        <!-- Product Table -->
+        <div style="background-color:#fff; border-radius:10px; border: 1px solid #D6D6D6;margin-top:20px;"
+             class="shadow-sm rounded">
+            <!-- Filter Section -->
+            <div class="d-flex justify-content-between" style="padding:10px 0px; background-color: #fff; border-radius:10px;">
+                <form th:action="@{/products/filter}" method="get" id="filterForm" class="d-flex justify-content-between align-items-center" style="width: 100%; padding: 10px 20px; background-color: #fff; border-radius: 10px;">
+                    <div class="d-flex align-items-center">
+                        <!-- Button "All" -->
+                        <button class="btn border" type="button" th:text="'All (' + ${totalProducts} + ')'" onclick="selectAllFilters()" style="margin-right: 20px;"></button>
+
+                        <!-- Category Dropdown -->
+                        <div class="dropdown" style="margin-right: 20px;">
+                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Category
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li th:each="cat : ${categories}">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" name="categories" th:value="${cat.name}" onchange="submitFilterForm()">
+                                        <span th:text="${cat.name}"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Brand Dropdown -->
+                        <div class="dropdown" style="margin-right: 20px;">
+                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Brand
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li th:each="brand : ${brands}">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" name="brands" th:value="${brand.name}" onchange="submitFilterForm()">
+                                        <span th:text="${brand.name}"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Search Form -->
+                    <div class="d-flex align-items-center">
+                        <input class="form-control" type="search" name="keyword" placeholder="Search" aria-label="Search" th:value="${keyword}" style="width: 200px; margin-right: 10px;">
+                        <button class="btn btn-outline-primary" type="button" onclick="submitFilterForm()">Search</button>
+                    </div>
+                </form>
+
+                <script>
+                    // JavaScript function to submit the form
+                    function submitFilterForm() {
+                        document.getElementById('filterForm').submit();
+                    }
+
+                    function selectAllFilters() {
+                        // Lấy tất cả các checkbox trong form
+                        const checkboxes = document.querySelectorAll("#filterForm input[type='checkbox']");
+
+                        // Bỏ chọn toàn bộ checkbox
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+
+                        // Submit form sau khi bỏ chọn
+                        document.getElementById("filterForm").submit();
+                    }
+                </script>
+            </div>
+
+
+            <!-- Table -->
+            <table class="table table-hover table-striped">
+                <thead class="table-primary">
+                <tr style="text-align:center">
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Category</th>
+                    <th>Brands</th>
+                    <th>Actions</th>
+                    <th>View</th>
+                </tr>
+                </thead>
+                <!-- Loop through products and create a modal for each one -->
+                <tbody th:if="${products != null && !products.isEmpty()}">
+                <tr th:each="item : ${products}" style="text-align:center">
+                    <td th:text="${item.id}"></td>
+                    <td><img th:src="${item.image}" alt="Image of ${item.name}" class="img-thumbnail"
+                             style="max-width: 60px;height:auto"></td>
+                    <td th:text="${item.name}" class="align-middle"></td>
+                    <td th:text="${item.price}" class="align-middle"></td>
+                    <td th:text="${item.quantity}" class="align-middle"></td>
+                    <td th:text="${item.category.name}" class="align-middle"></td>
+                    <td th:text="${item.brand.name}" class="align-middle"></td>
+                    <td class="align-middle">
+
+                        <form th:action="@{/products/delete/{id}(id=${item.id})}" method="get" style="display: inline;">
+                            <button type="submit" class="btn" onclick="return confirm('Are you sure?')">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+
+                        <button type="button" class="btn"  data-bs-toggle="modal"
+                                th:data-bs-target="'#editProductModal_' + ${item.id}"
+                                th:data-id="${item.id}"
+                                th:data-name="${item.name}"
+                                th:data-price="${item.price}"
+                                th:data-quantity="${item.quantity}"
+                                th:data-category="${item.category.name}"
+                                th:data-brand="${item.brand.name}"
+                                th:data-image="${item.image}"
+                                th:data-description="${item.description}">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+
+                    <td class="align-middle">
+                        <button type="button" class="btn"  data-bs-toggle="modal"
+                                th:data-bs-target="'#viewProductModal_' + ${item.id}"
+                                data-id="${item.id}"
+                                data-name="${item.name}"
+                                data-price="${item.price}"
+                                data-quantity="${item.quantity}"
+                                data-category="${item.category.name}"
+                                data-brand="${item.brand.name}"
+                                data-image="${item.image}"
+                                data-description="${item.description}">
+                            <i class="bi bi-eye-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+                <!-- Khi products là null hoặc rỗng -->
+                <tbody th:unless="${products != null && !products.isEmpty()}">
+                <tr>
+                    <td colspan="9" style="text-align:center;">No products available.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center my-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- Previous Page -->
+                <li class="page-item" th:classappend="${currentPage > 0 ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/products/filter(page=${currentPage - 1})}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalProducts / 5)}" th:classappend="${pageNum == currentPage ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/products/filter(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+                </li>
+
+                <!-- Next Page -->
+                <li class="page-item" th:classappend="${currentPage < totalProducts / 5 ? '' : 'disabled'}">
+                    <a class="page-link" th:href="@{/products/filter(page=${currentPage + 1})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal Add New Product -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/products/add}" th:object="${product}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="productNameNew" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productNameNew" name="name" th:field="*{name}"
+                                   required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="productPriceNew" name="price"
+                                   th:field="*{price}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productQuantityNew" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="productQuantityNew" name="quantity"
+                                   th:field="*{quantity}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategoryNew" class="form-label">Category</label>
+                            <select class="form-select" id="productCategoryNew" name="category.id"
+                                    th:field="*{category.id}" required>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                        th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productBrandNew" class="form-label">Brand</label>
+                            <select class="form-select" id="productBrandNew" name="brand.id" th:field="*{brand.id}"
+                                    required>
+                                <option th:each="brand : ${brands}" th:value="${brand.id}"
+                                        th:text="${brand.name}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImageNew" class="form-label">Image URL</label>
+                            <input type="text" class="form-control" id="productImageNew" name="image"
+                                   th:field="*{image}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descriptionNew" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="descriptionNew" name="description"
+                                   th:field="*{description}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Product Details -->
+    <div th:each="item : ${products}">
+        <div class="modal fade" th:id="'viewProductModal_' + ${item.id}" tabindex="-1"
+             aria-labelledby="viewProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg"> <!-- Đặt kích thước modal -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewProductModalLabel" th:text="${item.name}">Product Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3 text-center">
+                            <img th:src="${item.image}" alt="Image of ${item.name}" class="img-fluid" />
+                        </div>
+                        <div class="mb-3">
+                            <strong>Price:</strong> <span th:text="${item.price}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Quantity:</strong> <span th:text="${item.quantity}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Category:</strong> <span th:text="${item.category.name}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Brand:</strong> <span th:text="${item.brand.name}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Description:</strong> <span th:text="${item.description}"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for Editing Product -->
+    <div th:each="item : ${products}">
+        <div th:id="'editProductModal_' + ${item.id}" class="modal fade" tabindex="-1" role="dialog"
+             aria-labelledby="editProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form th:action="@{/products/update/{id}(id=${item.id})}" method="post">
+                            <!-- Preview Image -->
+                            <div class="mb-3 text-center">
+                                <img th:id="'imagePreview_' + ${item.id}"
+                                     th:src="${item.image}"
+                                     class="img-fluid"
+                                     alt="Product Image Preview"
+                                     style="display: block; max-height: 200px; border: 1px solid #ddd; border-radius: 10px;"/>
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="form-group mb-3">
+                                <label for="productName">Product Name</label>
+                                <input type="text" class="form-control" id="productName" name="name" th:value="${item.name}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productPrice">Price</label>
+                                <input type="number" class="form-control" id="productPrice" name="price" th:value="${item.price}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productQuantity">Quantity</label>
+                                <input type="number" class="form-control" id="productQuantity" name="quantity" th:value="${item.quantity}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productCategory">Category</label>
+                                <select class="form-control" id="productCategory" name="category.id" required>
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.name}"
+                                            th:selected="${cat.id == item.category.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productBrand">Brand</label>
+                                <select class="form-control" id="productBrand" name="brand.id" required>
+                                    <option th:each="brand : ${brands}"
+                                            th:value="${brand.id}"
+                                            th:text="${brand.name}"
+                                            th:selected="${brand.id == item.brand.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productImage">Image URL</label>
+                                <input type="text" class="form-control" id="productImage" name="image"
+                                       th:value="${item.image}"
+                                       data-id="${item.id}"
+                                       oninput="previewImage(event)" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productDescription">Description</label>
+                                <input type="text" class="form-control" id="productDescription" name="description" th:value="${item.description}" required>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const imagePreview = document.getElementById('imagePreview_' + input.dataset.id);
+            const url = input.value;
+
+            if (url) {
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
+    </script>
+
+
+    <div class="container mt-3">
+        <!-- Hiển thị thông báo thành công -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Hiển thị thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fixed-alert" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
