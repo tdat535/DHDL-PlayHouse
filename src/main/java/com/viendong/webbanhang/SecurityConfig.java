@@ -43,7 +43,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://java-dhdl-playhouse.onrender.com")  // Allow both local and production origins
+                        .allowedOrigins("http://localhost:3000", "https://dhdl-playhouse.fly.dev")  // Allow both local and production origins
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");  // Allow frontend origin
@@ -65,17 +65,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**")
-                        .permitAll() // Các trang công khai
-                        .requestMatchers("/authentication/recover")
-                        .permitAll() // Trang khôi phục mật khẩu
+                        .permitAll()
+                        .requestMatchers("/authentication/recover")  // Add this line
+                        .permitAll()
                         .requestMatchers("/products/add", "/dashboard/**", "/categories/add", "/brand/add")
-                        .authenticated() // Cả người dùng có vai trò "USER" và "ADMIN" đều có thể truy cập
+                        .hasAnyAuthority("ADMIN")
                         .requestMatchers("/api/**")
-                        .permitAll() // Các API công khai
-                        .anyRequest()
-                        .authenticated() // Mọi yêu cầu còn lại chỉ có thể truy cập khi người dùng đã đăng nhập
+                        .permitAll()
+                        .anyRequest().authenticated()
                 )
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/authentication/login")
