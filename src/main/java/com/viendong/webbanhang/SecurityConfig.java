@@ -65,15 +65,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/authentication/**", "/error", "/cart", "/cart/**")
-                        .permitAll()
-                        .requestMatchers("/authentication/recover")  // Add this line
-                        .permitAll()
+                        .permitAll() // Các trang công khai
+                        .requestMatchers("/authentication/recover")
+                        .permitAll() // Trang khôi phục mật khẩu
                         .requestMatchers("/products/add", "/dashboard/**", "/categories/add", "/brand/add")
-                        .hasAnyAuthority("ADMIN")
+                        .authenticated() // Cả người dùng có vai trò "USER" và "ADMIN" đều có thể truy cập
                         .requestMatchers("/api/**")
-                        .permitAll()
-                        .anyRequest().authenticated()
+                        .permitAll() // Các API công khai
+                        .anyRequest()
+                        .authenticated() // Mọi yêu cầu còn lại chỉ có thể truy cập khi người dùng đã đăng nhập
                 )
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/authentication/login")
