@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/authentication/recover")  // Add this line
                         .permitAll()
                         .requestMatchers("/products/add", "/dashboard/**", "/categories/add", "/brand/add")
-                        .hasAnyAuthority("ADMIN")
+                        .authenticated()
                         .requestMatchers("/api/**")
                         .permitAll()
                         .anyRequest().authenticated()
