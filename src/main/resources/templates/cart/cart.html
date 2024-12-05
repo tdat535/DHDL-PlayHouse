@@ -188,10 +188,11 @@
                                 </div>
                                 <div class="card-body">
                                     <p th:text="${innerProduct.name}" class="card-text" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
-                                    <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
+                                    <h4 class="card-title bold" th:text="${innerProduct.price} + '$'"></h4>
                                     <div class="d-flex mb-3">
                                 <span style="font-size: 12px;">
-                                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i>
+                                    <span th:text="${innerProduct.age} + '+'"></span>
                                 </span>
                                         <span style="font-size: 12px;">
                                     <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4

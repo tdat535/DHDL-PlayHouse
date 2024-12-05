@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class CategoryController {
+public class    CategoryController {
 
     private final CategoryService categoryService;
 

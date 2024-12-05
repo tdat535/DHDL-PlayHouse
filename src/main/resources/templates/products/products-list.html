@@ -175,8 +175,8 @@
                 <thead class="table-primary">
                 <tr style="text-align:center">
                     <th>ID</th>
-                    <th>Image</th>
-                    <th>Name</th>
+                    <th style="width: 60px">Image</th>
+                    <th style="width: 300px">Name</th>
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Category</th>
@@ -190,7 +190,7 @@
                 <tr th:each="item : ${products}" style="text-align:center">
                     <td th:text="${item.id}"></td>
                     <td><img th:src="${item.image}" alt="Image of ${item.name}" class="img-thumbnail"
-                             style="max-width: 60px;height:auto"></td>
+                             style="width: 60px;height:60px"></td>
                     <td th:text="${item.name}" class="align-middle"></td>
                     <td th:text="${item.price}" class="align-middle"></td>
                     <td th:text="${item.quantity}" class="align-middle"></td>

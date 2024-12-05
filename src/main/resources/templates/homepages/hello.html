@@ -48,7 +48,7 @@
                             <div>
                                 <a th:href="@{/homepage/category/filter(categoryId=${cat.id})}"
                                    style="text-decoration: none; color: inherit">
-                                    <img src="/Brand.png" class="card-img-top img-fluid zoom-img" alt="Image not found">
+                                    <img th:src="${cat.image}" class="card-img-top img-fluid zoom-img" alt="Image not found">
                                     <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
                                 </a>
                             </div>
@@ -73,20 +73,23 @@
     <!--    Cái dưới này mới là Brand-->
 
     <div class="container mt-4">
-        <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Category</h2> <!-- Title của mục -->
+        <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Brand</h2> <!-- Title của mục -->
         <div id="brandCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel"> <!-- Khung Carousel -->
             <div class="carousel-inner">
+                <!-- Vòng lặp để tạo từng item của carousel -->
                 <div th:each="brand, iterStat : ${brands}"
+                     th:if="${iterStat.index % 6 == 0}"
                      th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}">
-                    <!-- Thêm điều kiện để chỉ định item active -->
+                    <!-- iterStat kiểm tra phần từ đầu tiên và sau đó chỉ định active -->
                     <div class="row">
-                        <div class="col" th:each="brand : ${brands}">
+                        <!-- Hiển thị 6 mục mỗi carousel-item -->
+                        <div class="col-2" th:each="brd, innerStat : ${brands}"
+                             th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 6}">
                             <div>
-                                <a th:href="@{/homepage/brand/filter(brandId=${brand.id})}"
+                                <a th:href="@{/homepage/brand/filter(brandId=${brd.id})}"
                                    style="text-decoration: none; color: inherit">
-                                    <img th:src="${brand.image}" class="card-img-top img-fluid zoom-img"
-                                         alt="Image not found">
-                                    <h5 class="card-title text-center mt-2" th:text="${brand.name}">brand Name</h5>
+                                    <img th:src="${brd.image}" class="card-img-top img-fluid zoom-img" alt="Image not found">
+                                    <h5 class="card-title text-center mt-2" th:text="${brd.name}">Brand Name</h5>
                                 </a>
                             </div>
                         </div>
@@ -106,6 +109,7 @@
             </button>
         </div>
     </div>
+
 
     <!--Popular Product-->
     <div class="container-fluid" style="background-color:#C96868">
@@ -141,10 +145,11 @@
                                     <div class="card-body">
                                         <p th:text="${innerProduct.name}" class="card-text"
                                            style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
-                                        <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
+                                        <h4 class="card-title bold" th:text="${innerProduct.price} + '$'"></h4>
                                         <div class="d-flex mb-3">
                                             <span style="font-size: 12px;">
-                                                <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                                                <i class="bi bi-cake-fill" style="color:#7EACB5"></i>
+                                                <span th:text="${innerProduct.age} + '+'"></span>
                                             </span>
                                             <span style="font-size: 12px;">
                                                 <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
@@ -213,10 +218,11 @@
                                     <div class="card-body">
                                         <p th:text="${innerProduct.name}" class="card-text"
                                            style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
-                                        <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
+                                        <h4 class="card-title bold" th:text="${innerProduct.price} + '$'"></h4>
                                         <div class="d-flex mb-3">
                                             <span style="font-size: 12px;">
-                                                <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                                                <i class="bi bi-cake-fill" style="color:#7EACB5"></i>
+                                                <span th:text="${innerProduct.age} + '+'"></span>
                                             </span>
                                             <span style="font-size: 12px;">
                                                 <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
@@ -293,10 +299,11 @@
                                 <div class="card-body">
                                     <p th:text="${innerProduct.name}" class="card-text"
                                        style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
-                                    <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
+                                    <h4 class="card-title bold" th:text="${innerProduct.price} + '$'"></h4>
                                     <div class="d-flex mb-3">
                                 <span style="font-size: 12px;">
-                                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
+                                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i>
+                                    <span th:text="${innerProduct.age} + '+'"></span>
                                 </span>
                                         <span style="font-size: 12px;">
                                     <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
