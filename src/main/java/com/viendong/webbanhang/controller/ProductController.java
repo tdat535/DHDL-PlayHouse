@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -84,7 +85,13 @@ public class ProductController {
 
 
     @PostMapping("/add")
-    public String addProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String addProduct(
+            @Valid @ModelAttribute("product") Product product,
+            BindingResult bindingResult,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrand());
@@ -92,34 +99,61 @@ public class ProductController {
         }
 
         try {
-            product.setRating(null); // Ensure rating is null if not provided
-            productService.addProduct(product, redirectAttributes); // Save the product
+            // Lưu file hình ảnh
+            if (!imageFile.isEmpty()) {
+                String imageUrl = productService.saveImage(imageFile); // Lưu file và trả về đường dẫn
+                product.setImage(imageUrl); // Lưu đường dẫn ảnh vào cơ sở dữ liệu
+            }
+
+            product.setRating(null); // Đảm bảo rating là null nếu không cung cấp
+            redirectAttributes.addFlashAttribute("message",
+                    "Thêm sản phẩm '" + product.getName() + "' thành công");
+            productService.addProduct(product, redirectAttributes);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrand());
             return "/products/products-list";
         }
-
-        return "redirect:/products"; // Redirect after successfully adding the product
+        return "redirect:/products";
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
-        Category category = categoryService.getCategoryById(product.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-        Brand brand = brandService.getBrandById(product.getBrand().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
+    public String updateProduct(
+            @PathVariable Long id,
+            @ModelAttribute Product product,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            RedirectAttributes redirectAttributes) {
 
-        product.setCategory(category);
-        product.setBrand(brand);
+        try {
+            // Lấy sản phẩm hiện tại từ cơ sở dữ liệu
+            Product existingProduct = productService.getProductById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        productService.updateProduct(id, product);
+            // Nếu không có hình ảnh mới, giữ nguyên hình ảnh cũ
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = productService.saveImage(imageFile);
+                product.setImage(imageUrl); // Cập nhật hình ảnh mới
+            } else {
+                product.setImage(existingProduct.getImage()); // Giữ lại hình ảnh cũ
+            }
+
+            // Cập nhật các thông tin khác của sản phẩm
+            redirectAttributes.addFlashAttribute("message",
+                    "Cập nhật sản phẩm '" + product.getName() + "' thành công");
+            productService.updateProduct(id, product);
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/products";
+        }
+
         return "redirect:/products";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Long id) {
+    public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("message", "Sản phẩm đã được xóa thành công!");
         productService.deleteProductById(id);
         return "redirect:/products";
     }

@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
 <!--  <link rel="stylesheet" href="/css/category.css">-->
+  <script src="j"></script>
 </head>
 <body  style="background-color:#FFF4EA; color:#462424;font-family:'Nunito Sans';">
   <section layout:fragment="content" class="container-fluid p-0">
@@ -18,7 +19,7 @@
         <div class="sidebar w-25 p-0" style="height: 100vh; position: relative;">
           <nav aria-label="breadcrumb" class="container p-0" style="--bs-breadcrumb-divider: '>';">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#" style="color: inherit; text-decoration: none">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Board Games</li>
             </ol>
           </nav>
@@ -32,46 +33,76 @@
               <h5>Price</h5>
               <div class="filterItem" style="font-size:14px;">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="price0-200" data-filter="0 - 200.000₫">
+                  <input class="form-check-input" type="checkbox" value="0-200" id="price0-200" data-filter="0 - 200.000₫" onchange="filterByPrice()">
                   <label class="form-check-label" for="price0-200">0-200.000₫</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="price200-500" data-filter="200.000₫ - 500.000₫">
+                  <input class="form-check-input" type="checkbox" value="200-500" id="price200-500" data-filter="200.000₫ - 500.000₫" onchange="filterByPrice()">
                   <label class="form-check-label" for="price200-500">200.000₫ - 500.000₫</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="price500plus" data-filter="500.000₫ +">
+                  <input class="form-check-input" type="checkbox" value="500+" id="price500plus" data-filter="500.000₫ +" onchange="filterByPrice()">
                   <label class="form-check-label" for="price500plus">500.000₫ +</label>
                 </div>
               </div>
+
+              <script>
+                function filterByPrice() {
+                  var selectedPrice = [];
+                  // Lấy giá trị của các checkbox đã chọn
+                  document.querySelectorAll('.form-check-input:checked').forEach(function(checkbox) {
+                    selectedPrice.push(checkbox.value);
+                  });
+
+                  // Tạo URL để gửi tham số lọc giá
+                  var url = new URL(window.location.href);
+                  if (selectedPrice.length > 0) {
+                    url.searchParams.set('price', selectedPrice.join('-'));
+                  } else {
+                    url.searchParams.delete('price');
+                  }
+
+                  // Điều hướng lại trang với tham số lọc mới
+                  window.location.href = url.toString();
+                }
+
+                function filterByAge() {
+                  var selectedAge = [];
+                  // Lấy giá trị của các checkbox đã chọn
+                  document.querySelectorAll('.form-check-input:checked').forEach(function(checkbox) {
+                    selectedAge.push(checkbox.value);
+                  });
+
+                  // Tạo URL để gửi tham số lọc giá
+                  var url = new URL(window.location.href);
+                  if (selectedAge.length > 0) {
+                    url.searchParams.set('age', selectedAge.join('-'));
+                  } else {
+                    url.searchParams.delete('age');
+                  }
+
+                  // Điều hướng lại trang với tham số lọc mới
+                  window.location.href = url.toString();
+                }
+              </script>
+
               <hr style="color:#BCA779; height:2px;">
               <h5>Age</h5>
               <div class="filterItem" style="font-size:14px;">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="age0-1" data-filter="age 1+">
-                  <label class="form-check-label" for="age0-1">0-1 year</label>
+                  <input class="form-check-input" type="checkbox" value="1-3" id="age0-1" data-filter="age" onclick="filterByAge()">
+                  <label class="form-check-label" for="age0-1">1-3 year</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="age1-2" data-filter="age 4+">
-                  <label class="form-check-label" for="age1-2">1-2 years</label>
+                  <input class="form-check-input" type="checkbox" value="3-5" id="age1-2" data-filter="age" onclick="filterByAge()">
+                  <label class="form-check-label" for="age1-2">3-5 years</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="age2plus" data-filter="age 6+">
-                  <label class="form-check-label" for="age2plus">2+ years</label>
+                  <input class="form-check-input" type="checkbox" value="5plus" id="age2plus" data-filter="age" onclick="filterByAge()">
+                  <label class="form-check-label" for="age2plus">5+ years</label>
                 </div>
               </div>
               <hr style="color:#BCA779; height:2px;">
-              <h5>Availability</h5>
-              <div class="filterItem" style="font-size:14px;">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="new" data-filter="New">
-                  <label class="form-check-label" for="new">New</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="in-stock" data-filter="in-stock">
-                  <label class="form-check-label" for="in-stock">In Stock</label>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -82,19 +113,10 @@
             <h3>Board Games</h3>
             <div class="container d-flex justify-content-between py-2 px-4" style="background-color:#C96868; color: #FAF0F0; border-radius:99px">
               <span>Showing <span th:text="${productCount}">0</span> products</span>
-              <div class="d-flex">
-                <span class="me-2">Sort By:</span>
-                <div class="dropdown">
-                  <a class="dropdown-toggle link-offset-2 link-underline link-underline-opacity-0 link-light" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                    Newest
-                  </a>
-
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
-                </div>
+              <div>
+                <span>Filters:</span>
+                <span th:if="${param.price != null}" th:text="'Price: ' + ${param.price}"></span>
+                <span th:if="${param.age != null}" th:text="' | Age: ' + ${param.age}"></span>
               </div>
             </div>
           </div>
@@ -104,29 +126,35 @@
                 <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
                   <img th:src="${product.image}" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
-                <div class="card-body px-3 py-3 product-body" style="height: 150px; overflow: hidden;">
-                  <div>
+                <div class="card-body">
+                  <p th:text="${product.name}" class="card-text"
+                     style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+                  <h4 class="card-title bold" th:text="${product.price} + 'đ'"></h4>
+                  <div class="d-flex mb-3">
+                                <span style="font-size: 12px;">
+                                    <i class="bi bi-cake-fill" style="color:#7EACB5"></i>
+                                    <span th:text=" ${product.age} + '+'"></span>
+                                </span>
                     <span style="font-size: 12px;">
-                        <i class="bi bi-cake-fill" style="color:#7EACB5"></i> 18+
-                    </span>
-                    <span style="font-size: 12px;">
-                        <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
-                    </span>
+                                    <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
+                                </span>
                   </div>
-                  <p class="card-text m-0" th:text="${product.name}">Super Mario World™: Mario & Yoshi</p>
-                  <h4 class="card-title mb-2" style="font-weight: bold;" th:text="${product.price}">200.000d</h4>
                   <div class="d-flex justify-content-between">
                     <form th:action="@{/cart/add}" method="post">
-                      <input type="hidden" name="productId" th:value="${product.id}" />
-                      <input type="hidden" name="quantity" value="1" />
+                      <input type="hidden" name="productId" th:value="${product.id}"/>
+                      <input type="hidden" name="quantity" value="1"/>
                       <button type="submit" class="btn btn-warning">
                         <i class="bi bi-bag-fill"></i>
-                        Add to Bag
+                        <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
                       </button>
                     </form>
-                    <a th:href="@{/homepage/favorite/add(productId=${product.id})}" style="text-decoration: none; color: inherit">
-                      <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
-                    </a>
+                    <span>
+                      <a th:href="@{/homepage/favorite/add(productId=${product.id})}"
+                         style="text-decoration: none; color: inherit">
+                        <i class="bi bi-heart-fill btn btn-outline-danger"
+                           style="font-size:1rem"></i>
+                      </a>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -138,5 +166,6 @@
       </div>
     </div>
   </section>
+
 </body>
 </html>

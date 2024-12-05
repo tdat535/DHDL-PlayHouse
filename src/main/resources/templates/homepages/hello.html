@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>DHDL</title>
-<!--    <link rel="stylesheet" href="/css/home-style.css">-->
+    <!--    <link rel="stylesheet" href="/css/home-style.css">-->
     <style>
         .zoom-img {
             transition: transform 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
@@ -26,7 +26,7 @@
              style="color: #fff;top: 40%"> <!-- Các nội dung trong hình  -->
             <h1 class="mb-2">Creative Builds For Gamers</h1>
             <p class="mb-3">Discover next-level builds with LEGO gaming set.</p>
-            <a href="#" class="btn btn-light mt-3 btn-lg">Shop now <i class="bi bi-arrow-right-short"></i></a>
+            <a href="/homepage/brand/filter?brandId=4" class="btn btn-light mt-3 btn-lg">Shop now <i class="bi bi-arrow-right-short"></i></a>
         </div>
     </div>
 
@@ -39,13 +39,15 @@
                 <!-- iterStat % 6 để tạo điều kiện là cứ hết 6 item sẽ tạo carousel mới -->
                 <div th:each="category, iterStat : ${categories}"
                      th:if="${iterStat.index % 6 == 0}"
-                     th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}"> <!-- iterStat kiểm tra phần từ đầu tiên và sau đó chỉ định active -->
+                     th:class="${iterStat.index == 0 ? 'carousel-item active' : 'carousel-item'}">
+                    <!-- iterStat kiểm tra phần từ đầu tiên và sau đó chỉ định active -->
                     <div class="row">
                         <!-- Hiển thị 6 mục mỗi carousel-item -->
                         <div class="col-2" th:each="cat, innerStat : ${categories}"
                              th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 6}">
                             <div>
-                                <a th:href="@{/homepage/category/filter(categoryId=${cat.id})}" style="text-decoration: none; color: inherit">
+                                <a th:href="@{/homepage/category/filter(categoryId=${cat.id})}"
+                                   style="text-decoration: none; color: inherit">
                                     <img src="/Brand.png" class="card-img-top img-fluid zoom-img" alt="Image not found">
                                     <h5 class="card-title text-center mt-2" th:text="${cat.name}">Category Name</h5>
                                 </a>
@@ -67,8 +69,8 @@
             </button>
         </div>
     </div>
-<!--    Cái Shop By Category trên này là vì mục đích test giao diện vì bên tui ko có csdl cho brand-->
-<!--    Cái dưới này mới là Brand-->
+    <!--    Cái Shop By Category trên này là vì mục đích test giao diện vì bên tui ko có csdl cho brand-->
+    <!--    Cái dưới này mới là Brand-->
 
     <div class="container mt-4">
         <h2 class="text-center p-2 mb-3" style="font-weight:bolder;">Shop By Category</h2> <!-- Title của mục -->
@@ -80,8 +82,10 @@
                     <div class="row">
                         <div class="col" th:each="brand : ${brands}">
                             <div>
-                                <a th:href="@{/homepage/brand/filter(brandId=${brand.id})}" style="text-decoration: none; color: inherit">
-                                    <img th:src="${brand.image}" class="card-img-top img-fluid zoom-img" alt="Image not found">
+                                <a th:href="@{/homepage/brand/filter(brandId=${brand.id})}"
+                                   style="text-decoration: none; color: inherit">
+                                    <img th:src="${brand.image}" class="card-img-top img-fluid zoom-img"
+                                         alt="Image not found">
                                     <h5 class="card-title text-center mt-2" th:text="${brand.name}">brand Name</h5>
                                 </a>
                             </div>
@@ -109,9 +113,12 @@
             <h2 class="pt-2 ms-5" style="font-weight:bolder;color:#462424;">Popular Product</h2>
             <div id="popularCarousel" class="carousel carousel-dark slide">
                 <div class="carousel-indicators" style="position:absolute; bottom:-50px;">
-                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="0" class="active"
+                            aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#popularCarousel" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
                 </div>
                 <div class="carousel-inner">
                     <!-- Vòng lặp ngoài để tạo các carousel-item cho mỗi nhóm 5 sản phẩm -->
@@ -124,11 +131,16 @@
                                  th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 5}"
                                  class="col-auto" style="flex: 0 0 auto;">
                                 <div class="card" style="background-color: white; width: 220px;">
-                                    <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
-                                        <img src="../mario.png" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
-                                    </div>
+                                    <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}">
+                                        <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
+                                            <img th:src="${innerProduct.image}" class="card-img-top img-fluid zoom-img"
+                                                 alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
+                                        </div>
+                                    </a>
+
                                     <div class="card-body">
-                                        <p th:text="${innerProduct.name}" class="card-text" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+                                        <p th:text="${innerProduct.name}" class="card-text"
+                                           style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
                                         <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
                                         <div class="d-flex mb-3">
                                             <span style="font-size: 12px;">
@@ -138,14 +150,21 @@
                                                 <i class="bi bi-star-fill ms-2" style="color:#fcba03;"></i> 4.4
                                             </span>
                                         </div>
+
                                         <div class="d-flex justify-content-between">
-                                            <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}" class="btn btn-warning">
-                                                <i class="bi bi-bag-fill"></i>
-                                                <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
-                                            </a>
+                                            <form th:action="@{/cart/add}" method="post">
+                                                <input type="hidden" name="productId" th:value="${innerProduct.id}"/>
+                                                <input type="hidden" name="quantity" value="1"/>
+                                                <button type="submit" class="btn btn-warning">
+                                                    <i class="bi bi-bag-fill"></i>
+                                                    <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
+                                                </button>
+                                            </form>
                                             <span>
-                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
-                                                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}"
+                                                   style="text-decoration: none; color: inherit">
+                                                    <i class="bi bi-heart-fill btn btn-outline-danger"
+                                                       style="font-size:1rem"></i>
                                                 </a>
                                             </span>
                                         </div>
@@ -165,8 +184,9 @@
         <div class="position-absolute start-0 translate-middle-y text-start d-none d-lg-block w-25"
              style="top: 50%; margin-left: 100px;"> <!-- Các nội dung trong hình  -->
             <img src="../brand2.png" height="68" width="360" class="mb-2"/>
-            <h5 class="mb-3" style="font-weight: bold;">Find the playsets that little ones want — and buy directly from us, for a limited time!* Shop our collection for easy-peasy gifting.</h5>
-            <a href="#" class="btn btn-light mt-3 btn-lg">Shop now <i class="bi bi-arrow-right-short"></i></a>
+            <h5 class="mb-3" style="font-weight: bold;">Find the playsets that little ones want — and buy directly from
+                us, for a limited time!* Shop our collection for easy-peasy gifting.</h5>
+            <a href="/homepage/brand/filter?brandId=7" class="btn btn-light mt-3 btn-lg">Shop now <i class="bi bi-arrow-right-short"></i></a>
         </div>
     </div>
     <div class="container-fluid" style="background-color:#7EACB5">
@@ -184,11 +204,15 @@
                                  th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 5}"
                                  class="col-auto" style="flex: 0 0 auto;">
                                 <div class="card" style="background-color: white; width: 220px;">
-                                    <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
-                                        <img th:src="${innerProduct.image}" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
-                                    </div>
+                                    <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}">
+                                        <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
+                                            <img th:src="${innerProduct.image}" class="card-img-top img-fluid zoom-img"
+                                                 alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
+                                        </div>
+                                    </a>
                                     <div class="card-body">
-                                        <p th:text="${innerProduct.name}" class="card-text" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+                                        <p th:text="${innerProduct.name}" class="card-text"
+                                           style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
                                         <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
                                         <div class="d-flex mb-3">
                                             <span style="font-size: 12px;">
@@ -199,13 +223,19 @@
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}" class="btn btn-warning">
-                                                <i class="bi bi-bag-fill"></i>
-                                                <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
-                                            </a>
+                                            <form th:action="@{/cart/add}" method="post">
+                                                <input type="hidden" name="productId" th:value="${innerProduct.id}"/>
+                                                <input type="hidden" name="quantity" value="1"/>
+                                                <button type="submit" class="btn btn-warning">
+                                                    <i class="bi bi-bag-fill"></i>
+                                                    <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
+                                                </button>
+                                            </form>
                                             <span>
-                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
-                                                    <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                                <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}"
+                                                   style="text-decoration: none; color: inherit">
+                                                    <i class="bi bi-heart-fill btn btn-outline-danger"
+                                                       style="font-size:1rem"></i>
                                                 </a>
                                             </span>
                                         </div>
@@ -215,11 +245,15 @@
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#fisherCarousel" data-bs-slide="prev" style="position:absolute;top:50%;transform:translateY(-50%);width:5%;left:-60px">
+                <button class="carousel-control-prev" type="button" data-bs-target="#fisherCarousel"
+                        data-bs-slide="prev"
+                        style="position:absolute;top:50%;transform:translateY(-50%);width:5%;left:-60px">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#fisherCarousel" data-bs-slide="next" style="position:absolute;top:50%;transform:translateY(-50%);width:5%;right:-60px">
+                <button class="carousel-control-next" type="button" data-bs-target="#fisherCarousel"
+                        data-bs-slide="next"
+                        style="position:absolute;top:50%;transform:translateY(-50%);width:5%;right:-60px">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -232,9 +266,12 @@
         <h2 class="ms-5 pt-2" style="font-weight:bolder;">Newest Product</h2>
         <div id="productCarousel" class="carousel carousel-dark slide">
             <div class="carousel-indicators" style="position:absolute; bottom:-50px;">
-                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
             </div>
             <div class="carousel-inner">
                 <!-- Vòng lặp ngoài để tạo các carousel-item cho mỗi nhóm 5 sản phẩm -->
@@ -247,11 +284,15 @@
                              th:if="${innerStat.index >= iterStat.index and innerStat.index < iterStat.index + 5}"
                              class="col-auto" style="flex: 0 0 auto;">
                             <div class="card" style="background-color: white; width: 220px;">
-                                <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
-                                    <img src="../mario.png" class="card-img-top img-fluid zoom-img" alt="Product" style="width: 100%; height: 100%; object-fit: contain;">
-                                </div>
+                                <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}">
+                                    <div style="width:200px; height:180px;" class="mx-auto mt-4 img-container">
+                                        <img th:src="${innerProduct.image}" class="card-img-top img-fluid zoom-img" alt="Product"
+                                             style="width: 100%; height: 100%; object-fit: contain;">
+                                    </div>
+                                </a>
                                 <div class="card-body">
-                                    <p th:text="${innerProduct.name}" class="card-text" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
+                                    <p th:text="${innerProduct.name}" class="card-text"
+                                       style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></p>
                                     <h4 class="card-title bold" th:text="${innerProduct.price} + 'đ'"></h4>
                                     <div class="d-flex mb-3">
                                 <span style="font-size: 12px;">
@@ -262,13 +303,19 @@
                                 </span>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <a th:href="@{/products/productDetail/{id}(id=${innerProduct.id})}" class="btn btn-warning">
-                                            <i class="bi bi-bag-fill"></i>
-                                            <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
-                                        </a>
+                                        <form th:action="@{/cart/add}" method="post">
+                                            <input type="hidden" name="productId" th:value="${innerProduct.id}"/>
+                                            <input type="hidden" name="quantity" value="1"/>
+                                            <button type="submit" class="btn btn-warning">
+                                                <i class="bi bi-bag-fill"></i>
+                                                <span style="font-size: 12px; font-weight: 500; margin-left: 4px;">Add to Cart</span>
+                                            </button>
+                                        </form>
                                         <span>
-                                            <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}" style="text-decoration: none; color: inherit">
-                                                <i class="bi bi-heart-fill btn btn-outline-danger" style="font-size:1rem"></i>
+                                            <a th:href="@{/homepage/favorite/add(productId=${innerProduct.id})}"
+                                               style="text-decoration: none; color: inherit">
+                                                <i class="bi bi-heart-fill btn btn-outline-danger"
+                                                   style="font-size:1rem"></i>
                                             </a>
                                         </span>
                                     </div>

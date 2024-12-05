@@ -13,10 +13,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.viendong.webbanhang.ProductNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +47,22 @@ public class ProductService {
 
     public void save(Product product) {
         productRepository.save(product);
+    }
+
+    public String saveImage(MultipartFile imageFile) {
+        try {
+            String uploadDir = System.getProperty("user.dir") + "/uploads/images/";
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            return "/uploads/images/" + fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image file", e);
+        }
     }
 
     // Lấy sản phẩm với phân trang
@@ -86,6 +109,7 @@ public class ProductService {
         if (productRepository.existsByName(product.getName())) {
             redirectAttributes.addFlashAttribute("error",
                     "Sản phẩm '" + product.getName() + "' đã tồn tại.");
+            return null; // Không lưu sản phẩm nếu đã tồn tại
         }
         return productRepository.save(product);
     }

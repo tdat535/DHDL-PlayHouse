@@ -33,6 +33,9 @@ public class Product {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
+    private Integer age = 0;
+
     @Column(nullable = true, length = 500)  // Cập nhật chiều dài của description
     private String description;
 
@@ -72,6 +75,10 @@ public class Product {
         return quantity;
     }
 
+    public int getAge() {
+        return age != null ? age : 0;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -106,6 +113,10 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public void setQuantity(int quantity) {

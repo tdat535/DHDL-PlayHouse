@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.querySelector('#productQuantity').value = this.getAttribute('data-quantity');
             modal.querySelector('#productImage').value = this.getAttribute('data-image');
             modal.querySelector('#productDescription').value = this.getAttribute('data-description');
-
+            modal.querySelector('#productAge').value = this.getAttribute('data-age')
         });
     });
 });

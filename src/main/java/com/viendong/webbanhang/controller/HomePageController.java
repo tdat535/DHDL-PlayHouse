@@ -12,9 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/homepage")
@@ -49,33 +51,77 @@ public class HomePageController {
         return "homepages/hello";
     }
 
-    @GetMapping("/category/filter")
-    public String filterByCategory(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
-        List<Product> products;
-        model.addAttribute("categories", categoryService.getAllCategories());
-        if (categoryId == null) {
-            // Nếu không có brandId, lấy tất cả sản phẩm
-            products = productService.getAllProducts();
-        } else {
-            // Nếu có brandId, lấy sản phẩm theo danh mục
-            products = productService.getProductsByCategory(categoryId);
+    private List<Product> filterProducts(List<Product> products, String price, String age) {
+        // Lọc theo giá
+        if (price != null) {
+            String[] priceRange = price.split("-");
+            if (priceRange.length == 2) {
+                double minPrice = Double.parseDouble(priceRange[0].replace(",", "").trim());
+                double maxPrice = Double.parseDouble(priceRange[1].replace(",", "").trim());
+                products = products.stream()
+                        .filter(p -> p.getPrice() >= minPrice && p.getPrice() <= maxPrice)
+                        .collect(Collectors.toList());
+            }
         }
 
-        model.addAttribute("products", products);
+        // Lọc theo độ tuổi
+        if (age != null) {
+            String[] ageRange = age.split("-");
+            if (ageRange.length == 2) {
+                int minAge = Integer.parseInt(ageRange[0].trim());
+                int maxAge = Integer.parseInt(ageRange[1].trim());
+                products = products.stream()
+                        .filter(p -> p.getAge() >= minAge && p.getAge() <= maxAge)
+                        .collect(Collectors.toList());
+            } else if (age.equals("5plus")) {
+                products = products.stream()
+                        .filter(p -> p.getAge() > 5)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return products;
+    }
+
+
+    @GetMapping("/category/filter")
+    public String filterByCategory(
+            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "age", required = false) String age,
+            Model model) {
+
+        List<Product> products = new ArrayList<>();
+
+        model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrand());
-        model.addAttribute("productCount", products.size()); // Đếm số lượng sản phẩm và truyền vào Model
 
+        // Lấy danh sách sản phẩm theo categoryId (nếu có)
+        if (categoryId != null) {
+            products = productService.getProductsByCategory(categoryId);
+        } else {
+            products = productService.getAllProducts();
+        }
+
+        products = filterProducts(products, price, age);
+
+        // Gắn danh sách sản phẩm và số lượng sản phẩm vào model
+        model.addAttribute("products", products);
+        model.addAttribute("productCount", products.size());
+
+        // Xử lý giỏ hàng
         List<CartItem> cartItems = cartService.getCartItems();
-        // Tính tổng số lượng các sản phẩm trong giỏ hàng
         int totalItems = (int) cartItems.stream().count();
-
-        // Thêm tổng số lượng vào mô hình
         model.addAttribute("totalItems", totalItems);
+
         return "homepages/filter-page";
     }
 
     @GetMapping("/brand/filter")
-    public String filterByBrand(@RequestParam(value = "brandId", required = false) Long brandId, Model model) {
+    public String filterByBrand(@RequestParam(value = "brandId", required = false) Long brandId,
+                                @RequestParam(value = "price", required = false) String price,
+                                @RequestParam(value = "age", required = false) String age,
+                                Model model) {
         List<Product> products;
         model.addAttribute("brands", brandService.getAllBrand());
         if (brandId == null) {
@@ -85,6 +131,8 @@ public class HomePageController {
             // Nếu có brandId, lấy sản phẩm theo thương hiệu
             products = productService.getProductsByBrand(brandId);
         }
+
+        products = filterProducts(products, price, age);
 
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAllCategories());
@@ -101,9 +149,14 @@ public class HomePageController {
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam("query") String query, Model model) {
+    public String search(@RequestParam("query") String query,
+                         @RequestParam(value = "price", required = false) String price,
+                         @RequestParam(value = "age", required = false) String age,
+                         Model model) {
         // Get all products matching the search query
         List<Product> products = productService.searchProducts(query);
+
+        products = filterProducts(products, price, age);
 
         // Add categories, brands, and other data to the model for rendering
         model.addAttribute("products", products);

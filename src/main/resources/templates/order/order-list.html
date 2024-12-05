@@ -57,9 +57,9 @@
                 <td th:text="${orders.email}" class="align-middle"></td>
                 <td th:text="${orders.phone_number}" class="align-middle"></td>
                 <td class="align-middle">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal">
-                        <i class="bi bi-eye-fill" data-bs-toggle="modal"
-                           th:attr="data-bs-target='#orderDetailModal_' + ${orders.id}"></i>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            th:attr="data-bs-target='#orderDetailModal_' + ${orders.id}">
+                        <i class="bi bi-eye-fill"></i>
                     </button>
                 </td>
             </tr>

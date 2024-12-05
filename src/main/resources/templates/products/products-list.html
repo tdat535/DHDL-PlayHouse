@@ -24,6 +24,7 @@
 
         .page-item.active .page-link {
             background-color: #007bff;
+
             border-color: #007bff;
             color: white;
         }
@@ -54,6 +55,7 @@
             transition: opacity 0.3s ease; /* Hiệu ứng mờ dần */
             font-size: 14px; /* Cỡ chữ */
         }
+
         /* Khi hover vào nút, chữ sẽ xuất hiện */
         .btn:hover .btn-text {
             opacity: 1; /* Hiển thị chữ khi hover */
@@ -92,21 +94,27 @@
         <div style="background-color:#fff; border-radius:10px; border: 1px solid #D6D6D6;margin-top:20px;"
              class="shadow-sm rounded">
             <!-- Filter Section -->
-            <div class="d-flex justify-content-between" style="padding:10px 0px; background-color: #fff; border-radius:10px;">
-                <form th:action="@{/products/filter}" method="get" id="filterForm" class="d-flex justify-content-between align-items-center" style="width: 100%; padding: 10px 20px; background-color: #fff; border-radius: 10px;">
+            <div class="d-flex justify-content-between"
+                 style="padding:10px 0px; background-color: #fff; border-radius:10px;">
+                <form th:action="@{/products/filter}" method="get" id="filterForm"
+                      class="d-flex justify-content-between align-items-center"
+                      style="width: 100%; padding: 10px 20px; background-color: #fff; border-radius: 10px;">
                     <div class="d-flex align-items-center">
                         <!-- Button "All" -->
-                        <button class="btn border" type="button" th:text="'All (' + ${totalProducts} + ')'" onclick="selectAllFilters()" style="margin-right: 20px;"></button>
+                        <button class="btn border" type="button" th:text="'All (' + ${totalProducts} + ')'"
+                                onclick="selectAllFilters()" style="margin-right: 20px;"></button>
 
                         <!-- Category Dropdown -->
                         <div class="dropdown" style="margin-right: 20px;">
-                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                 Category
                             </button>
                             <ul class="dropdown-menu">
                                 <li th:each="cat : ${categories}">
                                     <label class="dropdown-item">
-                                        <input type="checkbox" name="categories" th:value="${cat.name}" onchange="submitFilterForm()">
+                                        <input type="checkbox" name="categories" th:value="${cat.name}"
+                                               onchange="submitFilterForm()">
                                         <span th:text="${cat.name}"></span>
                                     </label>
                                 </li>
@@ -115,13 +123,15 @@
 
                         <!-- Brand Dropdown -->
                         <div class="dropdown" style="margin-right: 20px;">
-                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                 Brand
                             </button>
                             <ul class="dropdown-menu">
                                 <li th:each="brand : ${brands}">
                                     <label class="dropdown-item">
-                                        <input type="checkbox" name="brands" th:value="${brand.name}" onchange="submitFilterForm()">
+                                        <input type="checkbox" name="brands" th:value="${brand.name}"
+                                               onchange="submitFilterForm()">
                                         <span th:text="${brand.name}"></span>
                                     </label>
                                 </li>
@@ -131,8 +141,10 @@
 
                     <!-- Search Form -->
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="search" name="keyword" placeholder="Search" aria-label="Search" th:value="${keyword}" style="width: 200px; margin-right: 10px;">
-                        <button class="btn btn-outline-primary" type="button" onclick="submitFilterForm()">Search</button>
+                        <input class="form-control" type="search" name="keyword" placeholder="Search"
+                               aria-label="Search" th:value="${keyword}" style="width: 200px; margin-right: 10px;">
+                        <button class="btn btn-outline-primary" type="button" onclick="submitFilterForm()">Search
+                        </button>
                     </div>
                 </form>
 
@@ -192,12 +204,13 @@
                             </button>
                         </form>
 
-                        <button type="button" class="btn"  data-bs-toggle="modal"
+                        <button type="button" class="btn" data-bs-toggle="modal"
                                 th:data-bs-target="'#editProductModal_' + ${item.id}"
                                 th:data-id="${item.id}"
                                 th:data-name="${item.name}"
                                 th:data-price="${item.price}"
                                 th:data-quantity="${item.quantity}"
+                                th:data-age="${item.age}"
                                 th:data-category="${item.category.name}"
                                 th:data-brand="${item.brand.name}"
                                 th:data-image="${item.image}"
@@ -207,12 +220,13 @@
                     </td>
 
                     <td class="align-middle">
-                        <button type="button" class="btn"  data-bs-toggle="modal"
+                        <button type="button" class="btn" data-bs-toggle="modal"
                                 th:data-bs-target="'#viewProductModal_' + ${item.id}"
                                 data-id="${item.id}"
                                 data-name="${item.name}"
                                 data-price="${item.price}"
                                 data-quantity="${item.quantity}"
+                                data-age="${item.age}"
                                 data-category="${item.category.name}"
                                 data-brand="${item.brand.name}"
                                 data-image="${item.image}"
@@ -243,7 +257,8 @@
                 </li>
 
                 <!-- Page Numbers -->
-                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalProducts / 5)}" th:classappend="${pageNum == currentPage ? 'active' : ''}">
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalProducts / 5)}"
+                    th:classappend="${pageNum == currentPage ? 'active' : ''}">
                     <a class="page-link" th:href="@{/products/filter(page=${pageNum})}" th:text="${pageNum + 1}"></a>
                 </li>
 
@@ -284,6 +299,11 @@
                                    th:field="*{quantity}" required>
                         </div>
                         <div class="mb-3">
+                            <label for="productAgeNew" class="form-label">For Age</label>
+                            <input type="number" class="form-control" id="productAgeNew" name="quantity"
+                                   th:field="*{age}" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="productCategoryNew" class="form-label">Category</label>
                             <select class="form-select" id="productCategoryNew" name="category.id"
                                     th:field="*{category.id}" required>
@@ -300,9 +320,8 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="productImageNew" class="form-label">Image URL</label>
-                            <input type="text" class="form-control" id="productImageNew" name="image"
-                                   th:field="*{image}" required>
+                            <label for="productImageNew" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="productImageNew" name="imageFile" required>
                         </div>
                         <div class="mb-3">
                             <label for="descriptionNew" class="form-label">Description</label>
@@ -330,13 +349,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3 text-center">
-                            <img th:src="${item.image}" alt="Image of ${item.name}" class="img-fluid" />
+                            <img th:src="${item.image}" alt="Image of ${item.name}" class="img-fluid"/>
                         </div>
                         <div class="mb-3">
                             <strong>Price:</strong> <span th:text="${item.price}"></span>
                         </div>
                         <div class="mb-3">
                             <strong>Quantity:</strong> <span th:text="${item.quantity}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>For Age:</strong> <span th:text="${item.age}"></span>
                         </div>
                         <div class="mb-3">
                             <strong>Category:</strong> <span th:text="${item.category.name}"></span>
@@ -356,7 +378,6 @@
         </div>
     </div>
 
-
     <!-- Modal for Editing Product -->
     <div th:each="item : ${products}">
         <div th:id="'editProductModal_' + ${item.id}" class="modal fade" tabindex="-1" role="dialog"
@@ -371,35 +392,47 @@
 
                     <!-- Body -->
                     <div class="modal-body">
-                        <form th:action="@{/products/update/{id}(id=${item.id})}" method="post">
+                        <form th:action="@{/products/update/{id}(id=${item.id})}" method="post"
+                              enctype="multipart/form-data">
                             <!-- Preview Image -->
                             <div class="mb-3 text-center">
-                                <img th:id="'imagePreview_' + ${item.id}"
-                                     th:src="${item.image}"
-                                     class="img-fluid"
-                                     alt="Product Image Preview"
-                                     style="display: block; max-height: 200px; border: 1px solid #ddd; border-radius: 10px;"/>
+                                <img th:id="'imagePreview_' + ${item.id}" th:src="${item.image}" class="img-fluid"
+                                     alt="Product Image Preview"/>
+                            </div>
+
+                            <!-- Image Upload -->
+                            <div class="form-group mb-3">
+                                <label for="productImageFile">Upload New Image</label>
+                                <input type="file" class="form-control" id="productImageFile" name="imageFile"
+                                       data-id="${item.id}" accept="image/*"
+                                       onchange="previewImage(event, '${item.id}')">
                             </div>
 
                             <!-- Product Details -->
                             <div class="form-group mb-3">
                                 <label for="productName">Product Name</label>
-                                <input type="text" class="form-control" id="productName" name="name" th:value="${item.name}" required>
+                                <input type="text" class="form-control" id="productName" name="name"
+                                       th:value="${item.name}" required>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="productPrice">Price</label>
-                                <input type="number" class="form-control" id="productPrice" name="price" th:value="${item.price}" required>
+                                <input type="number" class="form-control" id="productPrice" name="price"
+                                       th:value="${item.price}" required>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="productQuantity">Quantity</label>
-                                <input type="number" class="form-control" id="productQuantity" name="quantity" th:value="${item.quantity}" required>
+                                <input type="number" class="form-control" id="productQuantity" name="quantity"
+                                       th:value="${item.quantity}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productAge">For age</label>
+                                <input type="number" class="form-control" id="productAge" name="quantity"
+                                       th:value="${item.age}" required>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="productCategory">Category</label>
                                 <select class="form-control" id="productCategory" name="category.id" required>
-                                    <option th:each="cat : ${categories}"
-                                            th:value="${cat.id}"
-                                            th:text="${cat.name}"
+                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
                                             th:selected="${cat.id == item.category.id}">
                                     </option>
                                 </select>
@@ -407,23 +440,15 @@
                             <div class="form-group mb-3">
                                 <label for="productBrand">Brand</label>
                                 <select class="form-control" id="productBrand" name="brand.id" required>
-                                    <option th:each="brand : ${brands}"
-                                            th:value="${brand.id}"
-                                            th:text="${brand.name}"
+                                    <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"
                                             th:selected="${brand.id == item.brand.id}">
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="productImage">Image URL</label>
-                                <input type="text" class="form-control" id="productImage" name="image"
-                                       th:value="${item.image}"
-                                       data-id="${item.id}"
-                                       oninput="previewImage(event)" required>
-                            </div>
-                            <div class="form-group mb-3">
                                 <label for="productDescription">Description</label>
-                                <input type="text" class="form-control" id="productDescription" name="description" th:value="${item.description}" required>
+                                <input type="text" class="form-control" id="productDescription" name="description"
+                                       th:value="${item.description}" required>
                             </div>
 
                             <!-- Footer -->
@@ -437,17 +462,19 @@
         </div>
     </div>
 
-    <script>
-        function previewImage(event) {
-            const input = event.target;
-            const imagePreview = document.getElementById('imagePreview_' + input.dataset.id);
-            const url = input.value;
 
-            if (url) {
-                imagePreview.src = url;
-                imagePreview.style.display = 'block';
-            } else {
-                imagePreview.style.display = 'none';
+    <script>
+        function previewImage(event, id) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const previewImage = document.getElementById('imagePreview_' + id);
+                    if (previewImage) {
+                        previewImage.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         }
     </script>
